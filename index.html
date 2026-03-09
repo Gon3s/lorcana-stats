@@ -17,7 +17,6 @@
   ══════════════════════════════════════ -->
   <div id="upload-screen">
     <div class="upload-wrapper">
-
       <div class="upload-header">
         <div class="upload-gem-row">
           <div class="gem gem-amethyst"></div>
@@ -30,22 +29,18 @@
         <p class="upload-subtitle">Ton dashboard personnel Lorcana</p>
       </div>
 
-      <!-- Drop zone -->
       <div class="drop-zone" id="dropZone">
         <input type="file" id="fileInput" accept=".csv" hidden>
-
         <div class="drop-icon">📜</div>
-        <div class="drop-title">Dépose ton export Dreamborn ici</div>
+        <div class="drop-title">Dépose ton export duels.ink ici</div>
         <div class="drop-sub">ou</div>
         <button class="drop-btn" id="browseBtn">Parcourir…</button>
-        <div class="drop-hint">Fichier CSV exporté depuis <a href="https://dreamborn.ink" target="_blank" rel="noopener">dreamborn.ink</a></div>
-
+        <div class="drop-hint">Fichier CSV exporté depuis <a href="https://duels.ink" target="_blank" rel="noopener">duels.ink</a></div>
         <div class="drop-overlay" id="dropOverlay">
           <div class="drop-overlay-text">Lâche le fichier ✦</div>
         </div>
       </div>
 
-      <!-- Saved data banner -->
       <div class="saved-banner" id="savedBanner" style="display:none">
         <div class="saved-info">
           <span class="saved-icon">✦</span>
@@ -57,13 +52,11 @@
         </div>
       </div>
 
-      <!-- Error inline -->
       <div class="upload-error" id="uploadError" style="display:none"></div>
 
       <div class="upload-footer">
         Le fichier est lu <strong>localement dans ton navigateur</strong> — aucune donnée n'est envoyée.
       </div>
-
     </div>
   </div>
 
@@ -84,10 +77,8 @@
       <!-- HEADER -->
       <header>
         <div class="header-top-row">
-          <p class="header-eyebrow">Lorcana · Ranked BO1</p>
-          <button class="change-file-btn" id="changeFileBtn" title="Changer de fichier">
-            📁 Changer de fichier
-          </button>
+          <p class="header-eyebrow">Lorcana · duels.ink</p>
+          <button class="change-file-btn" id="changeFileBtn">📁 Changer de fichier</button>
         </div>
         <h1>The Inkwell Chronicles</h1>
         <p class="header-meta" id="headerMeta">Chargement…</p>
@@ -129,27 +120,23 @@
         </div>
       </div>
 
-      <!-- MMR EVOLUTION -->
+      <!-- ─────── MMR EVOLUTION ─────── -->
       <div class="section-label">Progression MMR</div>
       <div class="card card-full">
         <div class="card-title">Évolution du MMR</div>
         <div class="card-subtitle">Chaque point = une partie · vert = victoire · rouge = défaite</div>
         <div class="mmr-badge" id="mmrBadge"></div>
-        <div class="chart-wrap" style="height:260px">
-          <canvas id="mmrChart"></canvas>
-        </div>
+        <div class="chart-wrap" style="height:260px"><canvas id="mmrChart"></canvas></div>
       </div>
 
-      <!-- WIN/LOSS + DAILY -->
+      <!-- ─────── WIN/LOSS + DAILY ─────── -->
       <div class="grid-2">
         <div class="card">
           <div class="card-title">Victoires & Défaites</div>
           <div class="card-subtitle">Ratio global sur la sélection</div>
           <div class="donut-wrapper">
             <div class="donut-chart">
-              <div class="chart-wrap" style="width:150px;height:150px">
-                <canvas id="winLossChart"></canvas>
-              </div>
+              <div class="chart-wrap" style="width:150px;height:150px"><canvas id="winLossChart"></canvas></div>
             </div>
             <div class="donut-legend" id="wlLegend"></div>
           </div>
@@ -157,13 +144,11 @@
         <div class="card">
           <div class="card-title">Parties par jour</div>
           <div class="card-subtitle">Volume de jeu journalier</div>
-          <div class="chart-wrap" style="height:180px">
-            <canvas id="dailyChart"></canvas>
-          </div>
+          <div class="chart-wrap" style="height:180px"><canvas id="dailyChart"></canvas></div>
         </div>
       </div>
 
-      <!-- DECK WINRATES -->
+      <!-- ─────── DECK WINRATES ─────── -->
       <div class="section-label">Analyse par Deck</div>
       <div class="grid-2">
         <div class="card">
@@ -178,52 +163,42 @@
         </div>
       </div>
 
-      <!-- TURN ORDER + DURATION + LORE -->
+      <!-- ─────── STATS DE JEU ─────── -->
       <div class="section-label">Statistiques de Jeu</div>
       <div class="grid-3">
         <div class="card">
           <div class="card-title">Ordre de jeu</div>
           <div class="card-subtitle">OTP (premier) vs OTD (second)</div>
-          <div class="chart-wrap" style="height:150px">
-            <canvas id="turnChart"></canvas>
-          </div>
+          <div class="chart-wrap" style="height:150px"><canvas id="turnChart"></canvas></div>
           <div class="turn-cards" id="turnCards"></div>
         </div>
         <div class="card">
           <div class="card-title">Durée des parties</div>
           <div class="card-subtitle">Distribution en minutes</div>
-          <div class="chart-wrap" style="height:180px">
-            <canvas id="durChart"></canvas>
-          </div>
+          <div class="chart-wrap" style="height:180px"><canvas id="durChart"></canvas></div>
         </div>
         <div class="card">
           <div class="card-title">Lore moyen — victoires</div>
           <div class="card-subtitle">Score moyen par deck quand tu gagnes</div>
-          <div class="chart-wrap" style="height:180px">
-            <canvas id="loreChart"></canvas>
-          </div>
+          <div class="chart-wrap" style="height:180px"><canvas id="loreChart"></canvas></div>
         </div>
       </div>
 
-      <!-- SCATTER + TURNS -->
+      <!-- ─────── SCATTER + TOURS ─────── -->
       <div class="grid-2">
         <div class="card">
           <div class="card-title">Lore toi vs Adversaire</div>
           <div class="card-subtitle">Chaque partie · vert = victoire · rouge = défaite</div>
-          <div class="chart-wrap" style="height:220px">
-            <canvas id="scatterChart"></canvas>
-          </div>
+          <div class="chart-wrap" style="height:220px"><canvas id="scatterChart"></canvas></div>
         </div>
         <div class="card">
           <div class="card-title">Nombre de tours joués</div>
           <div class="card-subtitle">Parties courtes vs longues</div>
-          <div class="chart-wrap" style="height:220px">
-            <canvas id="turnsChart"></canvas>
-          </div>
+          <div class="chart-wrap" style="height:220px"><canvas id="turnsChart"></canvas></div>
         </div>
       </div>
 
-      <!-- STREAK + MMR/DECK -->
+      <!-- ─────── RÉCENCE ─────── -->
       <div class="section-label">Récence & Performance</div>
       <div class="grid-2">
         <div class="card">
@@ -234,13 +209,80 @@
         <div class="card">
           <div class="card-title">Δ MMR moyen par deck</div>
           <div class="card-subtitle">MMR gagné ou perdu en moyenne par partie</div>
-          <div class="chart-wrap" style="height:180px">
-            <canvas id="mmrDeckChart"></canvas>
-          </div>
+          <div class="chart-wrap" style="height:180px"><canvas id="mmrDeckChart"></canvas></div>
         </div>
       </div>
 
-      <!-- TABLE -->
+      <!-- ─────── ANALYSE CARTES CLÉS ─────── -->
+      <div class="section-label">Analyse par Carte</div>
+      <div class="card card-full">
+        <div class="card-title">Winrate par carte clé</div>
+        <div class="card-subtitle">Cartes présentes dans la Decklist · top 20 par nombre de parties · vert ≥ 60% · or ≥ 45% · rouge &lt; 45%</div>
+        <div id="cardAnalysisContent">
+          <div class="chart-wrap" style="height:460px"><canvas id="cardChart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ─────── HEATMAP + MOMENTUM ─────── -->
+      <div class="section-label">Analyse Temporelle</div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Heatmap heure / jour</div>
+          <div class="card-subtitle">Winrate selon l'heure et le jour de la semaine (UTC)</div>
+          <div class="heatmap-wrap">
+            <div class="heatmap-grid" id="heatmapGrid"></div>
+            <div class="heatmap-legend">
+              <span class="hm-leg-bad">0%</span>
+              <div class="hm-leg-bar"></div>
+              <span class="hm-leg-good">100%</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Momentum — winrate glissant</div>
+          <div class="card-subtitle">Fenêtre de 5 parties · seuil 50% en pointillé</div>
+          <div id="momentumStreaks" style="margin-bottom:10px;display:flex;flex-wrap:wrap;gap:8px"></div>
+          <div class="chart-wrap" style="height:200px"><canvas id="momentumChart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ─────── MATCHUP PREDICTOR ─────── -->
+      <div class="section-label">Prédiction & Matchups</div>
+      <div class="card card-full">
+        <div class="card-title">Prédicteur de matchup</div>
+        <div class="card-subtitle">Winrate historique contre chaque deck adverse · filtré par le deck sélectionné</div>
+        <div id="predictorContent"></div>
+      </div>
+
+      <!-- ─────── WEEK COMPARISON + BEST/WORST ─────── -->
+      <div class="section-label">Suivi de Progression</div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Cette semaine vs semaine précédente</div>
+          <div class="card-subtitle">Comparaison des deux dernières semaines (toutes données)</div>
+          <div id="weekCompContent"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Meilleur / pire deck — 20 dernières parties</div>
+          <div class="card-subtitle">Performance récente par combinaison (toutes données)</div>
+          <div id="bestWorstContent"></div>
+        </div>
+      </div>
+
+      <!-- ─────── MMR GOALS ─────── -->
+      <div class="card card-full" style="margin-bottom:24px">
+        <div class="card-title">Objectif MMR</div>
+        <div class="card-subtitle">Définis un palier cible et suis ta progression</div>
+        <div class="goal-input-row">
+          <label class="goal-label">Objectif :</label>
+          <input type="number" id="mmrGoalInput" class="goal-input" placeholder="ex: 1400" min="0" max="9999">
+          <span class="goal-hint">MMR</span>
+        </div>
+        <div id="mmrGoalBar" style="margin-top:16px"></div>
+        <div id="mmrGoalInfo" style="margin-top:8px;font-size:14px"></div>
+      </div>
+
+      <!-- ─────── TABLE ─────── -->
       <div class="section-label">Journal des Parties</div>
       <div class="card card-full">
         <div class="card-title">20 dernières parties</div>
@@ -259,13 +301,18 @@
       </div>
 
       <footer>
-        Inkwell Stats · données <a href="https://dreamborn.ink" target="_blank" rel="noopener">Dreamborn</a>
+        Inkwell Stats · données <a href="https://duels.ink" target="_blank" rel="noopener">duels.ink</a>
         · <button class="footer-link" id="footerChangeBtn">Changer de fichier</button>
       </footer>
 
     </div>
   </div>
 
+  <!-- Scripts (order matters) -->
+  <script src="js/parser.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/advanced.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

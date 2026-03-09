@@ -1,54 +1,96 @@
-# 🎴 Lorcana Dashboard
+# 🎴 Inkwell Stats — Lorcana Dashboard
 
-A personal stats dashboard for Disney Lorcana — reads your game history CSV exported from [Dreamborn](https://dreamborn.ink) and displays detailed analytics.
+A personal stats dashboard for Disney Lorcana — reads your game history CSV exported from [duels.ink](https://duels.ink) and displays comprehensive analytics.
 
 ## 🚀 GitHub Pages Setup (via GitHub Actions)
 
 1. **Fork / clone** this repository
-2. **Replace** `data/game-history.csv` with your own exported CSV from Dreamborn
-3. Go to your repo **Settings → Pages**
-4. Set source to **GitHub Actions** (not "Deploy from branch")
-5. Push to `main` — the Action deploys automatically
-6. Your dashboard will be live at `https://<username>.github.io/<repo-name>/`
+2. Go to your repo **Settings → Pages**
+3. Set source to **GitHub Actions**
+4. Push to `main` — the Action deploys automatically
+5. Your dashboard will be live at `https://<username>.github.io/<repo-name>/`
 
-> The workflow file is at `.github/workflows/deploy.yml`.
-> You can also trigger it manually from the **Actions** tab → **Deploy to GitHub Pages** → **Run workflow**.
+> You can also trigger a deployment manually: **Actions → Deploy to GitHub Pages → Run workflow**
+
+## 📥 How to export your CSV from duels.ink
+
+1. Go to [duels.ink](https://duels.ink) and log in
+2. Navigate to your **Game History**
+3. Click **Export CSV**
+4. Upload the file directly on the dashboard (drag & drop or browse)
+
+> Your data is read **locally in your browser** — nothing is sent to any server.
+
+## 📊 Features
+
+### Core stats
+- **KPIs** — games played, wins, losses, win rate, current MMR, avg duration
+- **MMR evolution** — line chart with every game colored by result
+- **Win/Loss donut** — ratio with key figures
+- **Daily volume** — stacked bar by day
+
+### Deck analysis
+- **Winrate by your deck** — all color combinations you played
+- **Winrate vs opponent colors** — how you fare against each archetype
+- **Avg lore on wins** — per deck
+- **Avg MMR delta by deck** — which deck gains you the most rating
+
+### Game stats
+- **Turn order (OTP/OTD)** — winrate going first vs second
+- **Duration distribution** — how long your games last
+- **Turns distribution** — short vs long games
+- **Lore scatter plot** — your score vs opponent, colored by result
+
+### Advanced analytics
+- **Card key winrate** — parses the Decklist column, shows top 20 cards by games played with winrate
+- **Heatmap hour/day** — when during the week you perform best (UTC)
+- **Momentum chart** — rolling 5-game winrate with streak highlights
+- **Matchup predictor** — historical winrate against every opponent color combo
+- **Week comparison** — this week vs last week (games, winrate, MMR delta, duration)
+- **Best/worst deck — last 20 games** — recent performance ranking
+- **MMR Goals** — set a target MMR, track progress and estimated games needed
+
+### UX
+- **Upload screen** — drag & drop or browse, with validation
+- **localStorage persistence** — data saved between visits, resume on next visit
+- **Deck filter** — all charts update live when filtering by deck
 
 ## 📂 Project Structure
 
 ```
-lorcana-dashboard/
-├── index.html          # Main page
+inkwell-stats/
+├── index.html
 ├── css/
-│   └── style.css       # All styles
+│   └── style.css
 ├── js/
-│   └── app.js          # CSV parsing + charts + filtering
+│   ├── parser.js      ← CSV + Decklist parsing
+│   ├── ui.js          ← Upload screen, filter, navigation, table
+│   ├── charts.js      ← Base charts (MMR, donut, bars, scatter…)
+│   ├── advanced.js    ← Advanced analytics (heatmap, momentum, predictor…)
+│   └── app.js         ← Main orchestrator
 ├── data/
-│   └── game-history.csv  # ← Replace with your CSV export
+│   └── game-history.csv  ← Optional: pre-loaded CSV (not required)
+├── .github/
+│   └── workflows/
+│       └── deploy.yml ← GitHub Actions deployment
 └── README.md
 ```
 
-## 📊 Features
+## 🛠 Local development
 
-- **MMR evolution** over time with win/loss coloring
-- **Win rate** by your deck and by opponent colors
-- **Turn order** analysis (OTP vs OTD)
-- **Game duration** and turn count distributions
-- **Lore scatter plot** — your score vs opponent
-- **Deck filter** — analyze any specific deck combo
-- **Recent games table** with full details
-- **Last 20 games streak** visualizer
+```bash
+# Any static HTTP server works:
+npx serve .
+# or
+python -m http.server 8000
+```
 
-## 📥 How to export your CSV from Dreamborn
-
-1. Go to [dreamborn.ink](https://dreamborn.ink)
-2. Navigate to **My Games → History**
-3. Click **Export CSV**
-4. Rename the file to `game-history.csv` and drop it in the `data/` folder
+> ⚠️ `fetch()` won't work when opening `index.html` directly — you need an HTTP server.
+> Uploading a CSV file via the UI works without a server.
 
 ## 🎨 Stack
 
-- Vanilla HTML/CSS/JS — zero build tools needed
-- [Chart.js](https://chartjs.org) for charts
-- [PapaParse](https://papaparse.com) for CSV parsing
+- Vanilla HTML/CSS/JS — zero build tools
+- [Chart.js 4](https://chartjs.org)
+- [PapaParse](https://papaparse.com)
 - [Google Fonts](https://fonts.google.com) — Cinzel + Crimson Pro

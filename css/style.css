@@ -699,3 +699,214 @@ footer a:hover { text-decoration: underline; }
   text-decoration: none;
 }
 .footer-link:hover { text-decoration: underline; }
+
+
+/* ═══════════════════════════════════════
+   HEATMAP
+   ═══════════════════════════════════════ */
+
+.heatmap-wrap { margin-top: 8px; }
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: 44px repeat(6, 1fr);
+  gap: 4px;
+}
+
+.hm-corner { }
+.hm-header {
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: .05em;
+  color: var(--muted);
+  padding: 4px 0;
+}
+.hm-day {
+  display: flex; align-items: center;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  color: var(--muted);
+  padding-right: 4px;
+}
+.hm-cell {
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  padding: 6px 4px;
+  text-align: center;
+  cursor: default;
+  transition: transform .15s;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.hm-cell:hover { transform: scale(1.08); z-index: 2; }
+.hm-empty { color: var(--border); font-size: 12px; display: flex; align-items: center; justify-content: center; }
+.hm-pct   { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 600; color: #fff; line-height: 1; }
+.hm-games { font-size: 9px; color: rgba(255,255,255,.5); }
+
+.heatmap-legend {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 12px; justify-content: flex-end;
+}
+.hm-leg-bad, .hm-leg-good { font-size: 11px; color: var(--muted); }
+.hm-leg-bar {
+  width: 80px; height: 6px; border-radius: 3px;
+  background: linear-gradient(90deg, hsl(0,60%,35%), hsl(45,70%,40%), hsl(130,65%,35%));
+}
+
+/* ═══════════════════════════════════════
+   MOMENTUM
+   ═══════════════════════════════════════ */
+
+.streak-badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+.streak-badge.win  { background: rgba(78,204,163,.15); color: var(--win);  border: 1px solid rgba(78,204,163,.3); }
+.streak-badge.loss { background: rgba(232,93,122,.15); color: var(--loss); border: 1px solid rgba(232,93,122,.3); }
+
+/* ═══════════════════════════════════════
+   MATCHUP PREDICTOR
+   ═══════════════════════════════════════ */
+
+.predictor-deck-label {
+  font-size: 13px; color: var(--muted);
+  margin-bottom: 16px; font-style: italic;
+}
+.predictor-deck-label strong { color: var(--text); font-style: normal; }
+
+.predictor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.predictor-card {
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  transition: border-color .2s, transform .15s;
+}
+.predictor-card:hover { transform: translateY(-2px); border-color: var(--gold); }
+
+.predictor-opp {
+  font-size: 12px; color: var(--muted);
+  margin-bottom: 6px; font-style: italic;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.predictor-rate {
+  font-family: 'Cinzel', serif;
+  font-size: 28px; font-weight: 600; line-height: 1;
+  margin-bottom: 2px;
+}
+.predictor-verdict { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; }
+.predictor-record  { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.predictor-last5   { font-size: 13px; }
+
+/* ═══════════════════════════════════════
+   WEEK COMPARISON
+   ═══════════════════════════════════════ */
+
+.week-comp-grid {
+  display: flex; gap: 0; align-items: flex-start;
+}
+.week-col {
+  flex: 1; padding: 8px;
+}
+.week-col-current {
+  background: rgba(201,168,76,.05);
+  border-radius: 10px;
+  border: 1px solid rgba(201,168,76,.15);
+}
+.week-divider {
+  padding: 24px 12px;
+  color: var(--border);
+  font-size: 20px;
+  align-self: center;
+}
+.week-label {
+  font-family: 'Cinzel', serif;
+  font-size: 11px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 12px; line-height: 1.4;
+}
+.week-label span { color: var(--muted); font-size: 10px; display: block; margin-top: 2px; }
+.week-stat {
+  font-size: 14px; color: var(--muted);
+  margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.week-stat span { color: var(--text); font-weight: 600; }
+
+/* ═══════════════════════════════════════
+   MMR GOALS
+   ═══════════════════════════════════════ */
+
+.goal-input-row {
+  display: flex; align-items: center; gap: 12px;
+  flex-wrap: wrap;
+}
+.goal-label {
+  font-family: 'Cinzel', serif; font-size: 12px;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--gold);
+}
+.goal-input {
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+  padding: 8px 14px;
+  width: 120px;
+  outline: none;
+  transition: border-color .2s;
+}
+.goal-input:focus { border-color: var(--gold); }
+.goal-hint { font-size: 13px; color: var(--muted); }
+
+.goal-bar-track {
+  position: relative;
+  height: 12px; border-radius: 6px;
+  background: var(--raised);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.goal-bar-fill {
+  height: 100%; border-radius: 6px;
+  transition: width .8s cubic-bezier(.4,0,.2,1);
+}
+.goal-bar-marker {
+  position: absolute; top: -2px;
+  width: 2px; height: 16px;
+  background: #fff;
+  transform: translateX(-1px);
+  border-radius: 1px;
+}
+.goal-bar-labels {
+  display: flex; justify-content: space-between;
+  font-size: 12px; color: var(--muted);
+  margin-top: 6px;
+}
+
+/* ═══════════════════════════════════════
+   BEST / WORST DECK
+   ═══════════════════════════════════════ */
+
+.bw-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: 8px;
+  border: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.bw-medal { font-size: 16px; flex-shrink: 0; width: 24px; text-align: center; }
+.bw-deck  { font-size: 13px; color: var(--text); flex-shrink: 0; min-width: 130px; }
+.bw-bar-wrap {
+  flex: 1; height: 6px;
+  background: var(--raised); border-radius: 3px; overflow: hidden;
+}
+.bw-bar { height: 100%; border-radius: 3px; transition: width .8s ease; }
+.bw-rate   { font-family: 'Cinzel', serif; font-size: 15px; flex-shrink: 0; width: 42px; text-align: right; }
+.bw-record { font-size: 11px; color: var(--muted); flex-shrink: 0; width: 50px; text-align: right; }
+
