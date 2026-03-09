@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lorcana Dashboard</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <!-- PapaParse (CSV parsing) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+
+  <!-- ── LOADING ── -->
+  <div id="loading-screen">
+    <div class="loader-gem"></div>
+    <div class="loader-text">Lecture du grimoire…</div>
+  </div>
+
+  <!-- ── ERROR ── -->
+  <div id="error-screen">
+    <div class="error-box">
+      <div class="error-icon">📜</div>
+      <h2>Fichier introuvable</h2>
+      <p>
+        Le dashboard n'a pas pu lire le fichier CSV.<br><br>
+        Assurez-vous que votre export Dreamborn est placé ici&nbsp;:<br>
+        <code>data/game-history.csv</code><br><br>
+        Sur GitHub Pages, les fichiers doivent être committés dans le repo.
+        En local, lancez un serveur HTTP (ex&nbsp;: <code>npx serve .</code>).
+      </p>
+    </div>
+  </div>
+
+  <!-- ── DASHBOARD ── -->
+  <div id="dashboard" style="display:none">
+    <div class="wrapper">
+
+      <!-- HEADER -->
+      <header>
+        <p class="header-eyebrow">Lorcana · Ranked BO1</p>
+        <h1>The Inkwell Chronicles</h1>
+        <p class="header-meta" id="headerMeta">Chargement…</p>
+        <div class="header-divider"><div class="header-divider-gem"></div></div>
+      </header>
+
+      <!-- FILTER BAR -->
+      <div class="filter-bar">
+        <span class="filter-label">Deck</span>
+        <div class="filter-pills" id="filterPills"></div>
+        <span class="filter-count" id="filterCount"></span>
+      </div>
+
+      <!-- KPI ROW -->
+      <div class="kpi-row">
+        <div class="kpi" style="--kpi-color:var(--gold-light)">
+          <span class="kpi-value" id="kpiTotal">—</span>
+          <span class="kpi-label">Parties</span>
+        </div>
+        <div class="kpi" style="--kpi-color:var(--win)">
+          <span class="kpi-value" id="kpiWins">—</span>
+          <span class="kpi-label">Victoires</span>
+        </div>
+        <div class="kpi" style="--kpi-color:var(--loss)">
+          <span class="kpi-value" id="kpiLosses">—</span>
+          <span class="kpi-label">Défaites</span>
+        </div>
+        <div class="kpi" style="--kpi-color:var(--win)">
+          <span class="kpi-value" id="kpiWinRate">—</span>
+          <span class="kpi-label">Win Rate</span>
+        </div>
+        <div class="kpi" style="--kpi-color:var(--amethyst)">
+          <span class="kpi-value" id="kpiMMR">—</span>
+          <span class="kpi-label">MMR Actuel</span>
+        </div>
+        <div class="kpi" style="--kpi-color:var(--sapphire)">
+          <span class="kpi-value" id="kpiDur">—</span>
+          <span class="kpi-label">Durée moy.</span>
+        </div>
+      </div>
+
+      <!-- MMR EVOLUTION -->
+      <div class="section-label">Progression MMR</div>
+      <div class="card card-full">
+        <div class="card-title">Évolution du MMR</div>
+        <div class="card-subtitle">Chaque point = une partie · vert = victoire · rouge = défaite</div>
+        <div class="mmr-badge" id="mmrBadge"></div>
+        <div class="chart-wrap" style="height:260px">
+          <canvas id="mmrChart"></canvas>
+        </div>
+      </div>
+
+      <!-- WIN/LOSS + DAILY -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Victoires & Défaites</div>
+          <div class="card-subtitle">Ratio global sur la sélection</div>
+          <div class="donut-wrapper">
+            <div class="donut-chart">
+              <div class="chart-wrap" style="width:150px;height:150px">
+                <canvas id="winLossChart"></canvas>
+              </div>
+            </div>
+            <div class="donut-legend" id="wlLegend"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Parties par jour</div>
+          <div class="card-subtitle">Volume de jeu journalier</div>
+          <div class="chart-wrap" style="height:180px">
+            <canvas id="dailyChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- DECK WINRATES -->
+      <div class="section-label">Analyse par Deck</div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Winrate — mon deck</div>
+          <div class="card-subtitle">Par combinaison de couleurs jouées</div>
+          <div id="myDeckBars"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Winrate — deck adverse</div>
+          <div class="card-subtitle">Contre quelles couleurs tu joues (≥ 2 parties)</div>
+          <div id="oppDeckBars"></div>
+        </div>
+      </div>
+
+      <!-- TURN ORDER + DURATION + LORE -->
+      <div class="section-label">Statistiques de Jeu</div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">Ordre de jeu</div>
+          <div class="card-subtitle">OTP (premier) vs OTD (second)</div>
+          <div class="chart-wrap" style="height:150px">
+            <canvas id="turnChart"></canvas>
+          </div>
+          <div class="turn-cards" id="turnCards"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Durée des parties</div>
+          <div class="card-subtitle">Distribution en minutes</div>
+          <div class="chart-wrap" style="height:180px">
+            <canvas id="durChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Lore moyen — victoires</div>
+          <div class="card-subtitle">Score moyen par deck quand tu gagnes</div>
+          <div class="chart-wrap" style="height:180px">
+            <canvas id="loreChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCATTER + TURNS -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Lore toi vs Adversaire</div>
+          <div class="card-subtitle">Chaque partie · vert = victoire · rouge = défaite</div>
+          <div class="chart-wrap" style="height:220px">
+            <canvas id="scatterChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Nombre de tours joués</div>
+          <div class="card-subtitle">Parties courtes vs longues</div>
+          <div class="chart-wrap" style="height:220px">
+            <canvas id="turnsChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- STREAK + MMR/DECK -->
+      <div class="section-label">Récence & Performance</div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Dernières 20 parties</div>
+          <div class="card-subtitle">V = Victoire · D = Défaite · ordre chronologique (le plus récent à droite)</div>
+          <div class="streak-row" id="streakRow"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Δ MMR moyen par deck</div>
+          <div class="card-subtitle">MMR gagné ou perdu en moyenne par partie</div>
+          <div class="chart-wrap" style="height:180px">
+            <canvas id="mmrDeckChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECENT GAMES TABLE -->
+      <div class="section-label">Journal des Parties</div>
+      <div class="card card-full">
+        <div class="card-title">20 dernières parties</div>
+        <div class="card-subtitle">Résultats détaillés · du plus récent au plus ancien</div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Résultat</th>
+                <th>Adversaire</th>
+                <th>Mon deck</th>
+                <th>Deck adverse</th>
+                <th>Lore moi</th>
+                <th>Lore eux</th>
+                <th>Tours</th>
+                <th>Durée</th>
+                <th>MMR Δ</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <footer>
+        Lorcana Dashboard · données issues de
+        <a href="https://dreamborn.ink" target="_blank" rel="noopener">Dreamborn</a> ·
+        Remplacez <code>data/game-history.csv</code> pour mettre à jour
+      </footer>
+
+    </div><!-- /.wrapper -->
+  </div><!-- /#dashboard -->
+
+  <script src="js/app.js"></script>
+</body>
+</html>
