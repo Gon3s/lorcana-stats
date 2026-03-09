@@ -441,3 +441,261 @@ footer a:hover { text-decoration: underline; }
   .filter-bar { padding: 14px 16px; }
   header h1 { font-size: 28px; }
 }
+
+
+/* ═══════════════════════════════════════
+   UPLOAD SCREEN
+   ═══════════════════════════════════════ */
+
+#upload-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.upload-wrapper {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: fadeUp .5s ease both;
+}
+
+/* gem row */
+.upload-gem-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.gem {
+  width: 14px; height: 14px;
+  transform: rotate(45deg);
+  animation: pulse-gem 2s ease-in-out infinite;
+}
+.gem-amethyst { background: var(--amethyst); animation-delay: 0s; }
+.gem-sapphire { background: var(--sapphire); animation-delay: .2s; }
+.gem-gold     { background: var(--gold);     animation-delay: .4s; width: 18px; height: 18px; }
+.gem-emerald  { background: var(--emerald);  animation-delay: .6s; }
+.gem-ruby     { background: var(--ruby);     animation-delay: .8s; }
+
+.upload-header { text-align: center; }
+
+.upload-header h1 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(32px, 8vw, 52px);
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold), #8b6914);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: .05em;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.upload-subtitle {
+  color: var(--muted);
+  font-style: italic;
+  font-size: 15px;
+}
+
+/* drop zone */
+.drop-zone {
+  position: relative;
+  background: var(--surface);
+  border: 2px dashed var(--border);
+  border-radius: 20px;
+  padding: 48px 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .25s, background .25s;
+  overflow: hidden;
+}
+
+.drop-zone:hover,
+.drop-zone.dragover {
+  border-color: var(--gold);
+  background: rgba(201,168,76,.05);
+}
+
+.drop-zone.dragover .drop-overlay { opacity: 1; pointer-events: all; }
+
+.drop-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  display: block;
+  filter: grayscale(0);
+  transition: transform .3s;
+}
+
+.drop-zone:hover .drop-icon { transform: scale(1.1) rotate(-5deg); }
+
+.drop-title {
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.drop-sub {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.drop-btn {
+  background: linear-gradient(135deg, rgba(201,168,76,.2), rgba(201,168,76,.1));
+  border: 1px solid var(--gold);
+  border-radius: 24px;
+  color: var(--gold-light);
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: .1em;
+  padding: 8px 24px;
+  cursor: pointer;
+  transition: background .2s, transform .15s;
+  margin-bottom: 16px;
+  display: inline-block;
+}
+
+.drop-btn:hover {
+  background: rgba(201,168,76,.25);
+  transform: translateY(-1px);
+}
+
+.drop-hint {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.drop-hint a { color: var(--gold); text-decoration: none; }
+.drop-hint a:hover { text-decoration: underline; }
+
+/* drag overlay */
+.drop-overlay {
+  position: absolute; inset: 0;
+  background: rgba(201,168,76,.12);
+  backdrop-filter: blur(2px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s;
+  border-radius: 18px;
+}
+
+.drop-overlay-text {
+  font-family: 'Cinzel', serif;
+  font-size: 20px;
+  color: var(--gold-light);
+  letter-spacing: .1em;
+}
+
+/* saved banner */
+.saved-banner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  animation: fadeUp .4s ease both;
+}
+
+.saved-info {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; color: var(--text);
+}
+
+.saved-icon { color: var(--gold); font-size: 16px; }
+
+.saved-actions { display: flex; gap: 8px; }
+
+.saved-btn-primary {
+  background: linear-gradient(135deg, rgba(201,168,76,.25), rgba(201,168,76,.12));
+  border: 1px solid var(--gold);
+  border-radius: 20px;
+  color: var(--gold-light);
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: .08em;
+  padding: 6px 18px;
+  cursor: pointer;
+  transition: background .2s;
+}
+.saved-btn-primary:hover { background: rgba(201,168,76,.3); }
+
+.saved-btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: border-color .2s, color .2s;
+}
+.saved-btn-ghost:hover { border-color: var(--loss); color: var(--loss); }
+
+/* upload error */
+.upload-error {
+  background: rgba(232,93,122,.1);
+  border: 1px solid rgba(232,93,122,.35);
+  border-radius: 10px;
+  padding: 12px 18px;
+  color: var(--loss);
+  font-size: 14px;
+}
+
+/* upload footer */
+.upload-footer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 0 8px;
+}
+
+.upload-footer strong { color: var(--text); }
+
+/* ── Dashboard "change file" button ── */
+.header-top-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.change-file-btn {
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: border-color .2s, color .2s;
+  white-space: nowrap;
+}
+.change-file-btn:hover { border-color: var(--gold); color: var(--gold-light); }
+
+.footer-link {
+  background: none;
+  border: none;
+  color: var(--gold);
+  cursor: pointer;
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 13px;
+  font-style: italic;
+  padding: 0;
+  text-decoration: none;
+}
+.footer-link:hover { text-decoration: underline; }

@@ -3,50 +3,92 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lorcana Dashboard</title>
-
-  <!-- Fonts -->
+  <title>Inkwell Stats — Lorcana Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <!-- Styles -->
   <link rel="stylesheet" href="css/style.css">
-
-  <!-- Chart.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-  <!-- PapaParse (CSV parsing) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
 
-  <!-- ── LOADING ── -->
-  <div id="loading-screen">
+  <!-- ══════════════════════════════════════
+       UPLOAD SCREEN
+  ══════════════════════════════════════ -->
+  <div id="upload-screen">
+    <div class="upload-wrapper">
+
+      <div class="upload-header">
+        <div class="upload-gem-row">
+          <div class="gem gem-amethyst"></div>
+          <div class="gem gem-sapphire"></div>
+          <div class="gem gem-gold"></div>
+          <div class="gem gem-emerald"></div>
+          <div class="gem gem-ruby"></div>
+        </div>
+        <h1>Inkwell Stats</h1>
+        <p class="upload-subtitle">Ton dashboard personnel Lorcana</p>
+      </div>
+
+      <!-- Drop zone -->
+      <div class="drop-zone" id="dropZone">
+        <input type="file" id="fileInput" accept=".csv" hidden>
+
+        <div class="drop-icon">📜</div>
+        <div class="drop-title">Dépose ton export Dreamborn ici</div>
+        <div class="drop-sub">ou</div>
+        <button class="drop-btn" id="browseBtn">Parcourir…</button>
+        <div class="drop-hint">Fichier CSV exporté depuis <a href="https://dreamborn.ink" target="_blank" rel="noopener">dreamborn.ink</a></div>
+
+        <div class="drop-overlay" id="dropOverlay">
+          <div class="drop-overlay-text">Lâche le fichier ✦</div>
+        </div>
+      </div>
+
+      <!-- Saved data banner -->
+      <div class="saved-banner" id="savedBanner" style="display:none">
+        <div class="saved-info">
+          <span class="saved-icon">✦</span>
+          <span id="savedLabel">Données précédentes disponibles</span>
+        </div>
+        <div class="saved-actions">
+          <button class="saved-btn-primary" id="loadSavedBtn">Reprendre</button>
+          <button class="saved-btn-ghost"   id="clearSavedBtn">Effacer</button>
+        </div>
+      </div>
+
+      <!-- Error inline -->
+      <div class="upload-error" id="uploadError" style="display:none"></div>
+
+      <div class="upload-footer">
+        Le fichier est lu <strong>localement dans ton navigateur</strong> — aucune donnée n'est envoyée.
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       LOADING
+  ══════════════════════════════════════ -->
+  <div id="loading-screen" style="display:none">
     <div class="loader-gem"></div>
     <div class="loader-text">Lecture du grimoire…</div>
   </div>
 
-  <!-- ── ERROR ── -->
-  <div id="error-screen">
-    <div class="error-box">
-      <div class="error-icon">📜</div>
-      <h2>Fichier introuvable</h2>
-      <p>
-        Le dashboard n'a pas pu lire le fichier CSV.<br><br>
-        Assurez-vous que votre export Dreamborn est placé ici&nbsp;:<br>
-        <code>data/game-history.csv</code><br><br>
-        Sur GitHub Pages, les fichiers doivent être committés dans le repo.
-        En local, lancez un serveur HTTP (ex&nbsp;: <code>npx serve .</code>).
-      </p>
-    </div>
-  </div>
-
-  <!-- ── DASHBOARD ── -->
+  <!-- ══════════════════════════════════════
+       DASHBOARD
+  ══════════════════════════════════════ -->
   <div id="dashboard" style="display:none">
     <div class="wrapper">
 
       <!-- HEADER -->
       <header>
-        <p class="header-eyebrow">Lorcana · Ranked BO1</p>
+        <div class="header-top-row">
+          <p class="header-eyebrow">Lorcana · Ranked BO1</p>
+          <button class="change-file-btn" id="changeFileBtn" title="Changer de fichier">
+            📁 Changer de fichier
+          </button>
+        </div>
         <h1>The Inkwell Chronicles</h1>
         <p class="header-meta" id="headerMeta">Chargement…</p>
         <div class="header-divider"><div class="header-divider-gem"></div></div>
@@ -112,7 +154,6 @@
             <div class="donut-legend" id="wlLegend"></div>
           </div>
         </div>
-
         <div class="card">
           <div class="card-title">Parties par jour</div>
           <div class="card-subtitle">Volume de jeu journalier</div>
@@ -132,7 +173,7 @@
         </div>
         <div class="card">
           <div class="card-title">Winrate — deck adverse</div>
-          <div class="card-subtitle">Contre quelles couleurs tu joues (≥ 2 parties)</div>
+          <div class="card-subtitle">Contre quelles couleurs (≥ 2 parties)</div>
           <div id="oppDeckBars"></div>
         </div>
       </div>
@@ -148,7 +189,6 @@
           </div>
           <div class="turn-cards" id="turnCards"></div>
         </div>
-
         <div class="card">
           <div class="card-title">Durée des parties</div>
           <div class="card-subtitle">Distribution en minutes</div>
@@ -156,7 +196,6 @@
             <canvas id="durChart"></canvas>
           </div>
         </div>
-
         <div class="card">
           <div class="card-title">Lore moyen — victoires</div>
           <div class="card-subtitle">Score moyen par deck quand tu gagnes</div>
@@ -175,7 +214,6 @@
             <canvas id="scatterChart"></canvas>
           </div>
         </div>
-
         <div class="card">
           <div class="card-title">Nombre de tours joués</div>
           <div class="card-subtitle">Parties courtes vs longues</div>
@@ -190,10 +228,9 @@
       <div class="grid-2">
         <div class="card">
           <div class="card-title">Dernières 20 parties</div>
-          <div class="card-subtitle">V = Victoire · D = Défaite · ordre chronologique (le plus récent à droite)</div>
+          <div class="card-subtitle">V = Victoire · D = Défaite · ordre chronologique</div>
           <div class="streak-row" id="streakRow"></div>
         </div>
-
         <div class="card">
           <div class="card-title">Δ MMR moyen par deck</div>
           <div class="card-subtitle">MMR gagné ou perdu en moyenne par partie</div>
@@ -203,40 +240,31 @@
         </div>
       </div>
 
-      <!-- RECENT GAMES TABLE -->
+      <!-- TABLE -->
       <div class="section-label">Journal des Parties</div>
       <div class="card card-full">
         <div class="card-title">20 dernières parties</div>
         <div class="card-subtitle">Résultats détaillés · du plus récent au plus ancien</div>
         <div class="table-wrap">
           <table class="data-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Résultat</th>
-                <th>Adversaire</th>
-                <th>Mon deck</th>
-                <th>Deck adverse</th>
-                <th>Lore moi</th>
-                <th>Lore eux</th>
-                <th>Tours</th>
-                <th>Durée</th>
-                <th>MMR Δ</th>
-              </tr>
-            </thead>
+            <thead><tr>
+              <th>Date</th><th>Résultat</th><th>Adversaire</th>
+              <th>Mon deck</th><th>Deck adverse</th>
+              <th>Lore moi</th><th>Lore eux</th>
+              <th>Tours</th><th>Durée</th><th>MMR Δ</th>
+            </tr></thead>
             <tbody id="tableBody"></tbody>
           </table>
         </div>
       </div>
 
       <footer>
-        Lorcana Dashboard · données issues de
-        <a href="https://dreamborn.ink" target="_blank" rel="noopener">Dreamborn</a> ·
-        Remplacez <code>data/game-history.csv</code> pour mettre à jour
+        Inkwell Stats · données <a href="https://dreamborn.ink" target="_blank" rel="noopener">Dreamborn</a>
+        · <button class="footer-link" id="footerChangeBtn">Changer de fichier</button>
       </footer>
 
-    </div><!-- /.wrapper -->
-  </div><!-- /#dashboard -->
+    </div>
+  </div>
 
   <script src="js/app.js"></script>
 </body>
