@@ -1,39 +1,41 @@
-/* ═══════════════════════════════════════
-   app.js — Orchestrateur principal
-   ═══════════════════════════════════════ */
+/**
+ * app.js — Orchestrateur principal (SRP + DIP)
+ * Assemble les modules via injection de dépendances.
+ * Ne contient aucune logique métier : seulement le câblage.
+ */
 
-let allGames   = [];
-let activeDeck = 'all';
+import { store }            from './store.js';
+import { parseCSV }         from './parser.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-  initUploadScreen(onCSV);
-  checkSavedData();
-});
+// UI
+import { showDashboard, showUploadScreen }                     from './ui/screens.js';
+import { initUploadScreen, checkSavedData, showUploadError }   from './ui/upload.js';
+import { buildFilterBar }                                       from './ui/filter.js';
+import { updateHeader, renderTable, renderStreak }             from './ui/dashboard.js';
 
-function onCSV(csvText) {
-  try {
-    allGames   = parseCSV(csvText);
-    activeDeck = 'all';
-    showDashboard();
-    buildFilterBar(allGames, onFilter);
-    renderAll(allGames);
-  } catch (err) {
-    showUploadScreen();
-    showUploadError(err.message);
-  }
-}
+// Graphiques de base
+import { renderMMRChart, renderMMRByDeck }                     from './charts/mmr.js';
+import { renderWinLossDonut, renderDailyChart, renderDeckBars } from './charts/distribution.js';
+import { renderTurnOrder, renderDurationChart, renderLoreChart,
+         renderScatter, renderTurnsChart }                      from './charts/gameplay.js';
 
-function onFilter(filtered, deckValue) {
-  activeDeck = deckValue;
-  renderAll(filtered);
-}
+// Analyses avancées
+import { renderCardAnalysis }                                   from './advanced/cards.js';
+import { renderHeatmap }                                        from './advanced/heatmap.js';
+import { renderMomentum }                                       from './advanced/momentum.js';
+import { renderMatchupPredictor }                               from './advanced/predictor.js';
+import { renderWeekComparison, renderBestWorstDeck }            from './advanced/weekly.js';
+import { renderMMRGoals }                                       from './advanced/goals.js';
+
+// ── Rendu complet du dashboard ─────────────────────────────────────────────
 
 function renderAll(games) {
   if (!games.length) return;
 
+  // En-tête & KPIs
   updateHeader(games);
 
-  // Base charts
+  // Graphiques principaux
   renderMMRChart(games);
   renderWinLossDonut(games);
   renderDailyChart(games);
@@ -50,14 +52,45 @@ function renderAll(games) {
   renderStreak(games);
   renderTable(games);
 
-  // Advanced
+  // Analyses avancées (données filtrées)
   renderCardAnalysis(games);
   renderHeatmap(games);
   renderMomentum(games);
-  renderMatchupPredictor(games, activeDeck);
+  renderMatchupPredictor(games, store.activeDeck);
   renderMMRGoals(games);
 
-  // Always use allGames (not filtered by deck)
-  renderWeekComparison(allGames);
-  renderBestWorstDeck(allGames);
+  // Toujours sur l'ensemble des données (indépendant du filtre deck)
+  renderWeekComparison(store.allGames);
+  renderBestWorstDeck(store.allGames);
 }
+
+// ── Callbacks ──────────────────────────────────────────────────────────────
+
+function onCSV(csvText) {
+  try {
+    const games = parseCSV(csvText);
+    store.setGames(games);
+    showDashboard();
+    buildFilterBar(store.allGames, (filtered, deck) => {
+      store.setActiveDeck(deck);
+      renderAll(filtered);
+    });
+    renderAll(store.allGames);
+  } catch (err) {
+    showUploadScreen();
+    showUploadError(err.message);
+  }
+}
+
+function goToUpload() {
+  document.getElementById('fileInput').value = '';
+  showUploadScreen();
+  checkSavedData();
+}
+
+// ── Initialisation ─────────────────────────────────────────────────────────
+
+document.addEventListener('DOMContentLoaded', () => {
+  initUploadScreen(onCSV, goToUpload);
+  checkSavedData();
+});

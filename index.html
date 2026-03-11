@@ -4,29 +4,71 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inkwell Stats — Lorcana Dashboard</title>
+
+  <!-- Polices -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Tailwind CDN + configuration thème Lorcana -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink:      '#0a0b14',
+            surface:  '#141628',
+            raised:   '#1c1f38',
+            lborder:  '#2a2f55',
+            gold:     { DEFAULT: '#c9a84c', light: '#f0cc6e' },
+            amethyst: '#9b59b6',
+            sapphire: '#3498db',
+            ruby:     '#e74c3c',
+            emerald:  '#2ecc71',
+            win:      '#4ecca3',
+            loss:     '#e85d7a',
+            ltext:    '#d4c9f0',
+            muted:    '#7a7fa0',
+          },
+          fontFamily: {
+            display: ['Cinzel', 'Georgia', 'serif'],
+            body:    ['Crimson Pro', 'Georgia', 'serif'],
+          },
+          borderRadius: {
+            card: '14px',
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Styles personnalisés (animations, composants complexes, variables CSS) -->
   <link rel="stylesheet" href="css/style.css">
+
+  <!-- Bibliothèques CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
-<body>
+<body class="bg-ink font-body text-ltext">
 
   <!-- ══════════════════════════════════════
-       UPLOAD SCREEN
+       ÉCRAN D'UPLOAD
   ══════════════════════════════════════ -->
-  <div id="upload-screen">
+  <div id="upload-screen" class="min-h-screen flex items-center justify-center px-4 py-8">
     <div class="upload-wrapper">
-      <div class="upload-header">
-        <div class="upload-gem-row">
+
+      <div class="upload-header text-center">
+        <div class="flex justify-center gap-3 mb-3">
           <div class="gem gem-amethyst"></div>
           <div class="gem gem-sapphire"></div>
           <div class="gem gem-gold"></div>
           <div class="gem gem-emerald"></div>
           <div class="gem gem-ruby"></div>
         </div>
-        <h1>Inkwell Stats</h1>
-        <p class="upload-subtitle">Ton dashboard personnel Lorcana</p>
+        <h1 class="font-display font-black gradient-title text-5xl tracking-widest leading-tight mb-1">
+          Inkwell Stats
+        </h1>
+        <p class="text-muted italic text-base">Ton dashboard personnel Lorcana</p>
       </div>
 
       <div class="drop-zone" id="dropZone">
@@ -35,7 +77,10 @@
         <div class="drop-title">Dépose ton export duels.ink ici</div>
         <div class="drop-sub">ou</div>
         <button class="drop-btn" id="browseBtn">Parcourir…</button>
-        <div class="drop-hint">Fichier CSV exporté depuis <a href="https://duels.ink" target="_blank" rel="noopener">duels.ink</a></div>
+        <div class="drop-hint">
+          Fichier CSV exporté depuis
+          <a href="https://duels.ink" target="_blank" rel="noopener">duels.ink</a>
+        </div>
         <div class="drop-overlay" id="dropOverlay">
           <div class="drop-overlay-text">Lâche le fichier ✦</div>
         </div>
@@ -54,46 +99,52 @@
 
       <div class="upload-error" id="uploadError" style="display:none"></div>
 
-      <div class="upload-footer">
-        Le fichier est lu <strong>localement dans ton navigateur</strong> — aucune donnée n'est envoyée.
-      </div>
+      <p class="text-center text-xs text-muted px-2">
+        Le fichier est lu <strong class="text-ltext">localement dans ton navigateur</strong> — aucune donnée n'est envoyée.
+      </p>
     </div>
   </div>
 
   <!-- ══════════════════════════════════════
-       LOADING
+       CHARGEMENT
   ══════════════════════════════════════ -->
-  <div id="loading-screen" style="display:none">
+  <div id="loading-screen" class="fixed inset-0 bg-ink flex flex-col items-center justify-content-center gap-6 z-50"
+       style="display:none; justify-content:center">
     <div class="loader-gem"></div>
-    <div class="loader-text">Lecture du grimoire…</div>
+    <div class="font-display text-gold uppercase tracking-widest text-sm">Lecture du grimoire…</div>
   </div>
 
   <!-- ══════════════════════════════════════
        DASHBOARD
   ══════════════════════════════════════ -->
   <div id="dashboard" style="display:none">
-    <div class="wrapper">
+    <div class="relative z-10 max-w-screen-xl mx-auto px-8 py-12 max-sm:px-4 max-sm:py-6">
 
       <!-- HEADER -->
-      <header>
-        <div class="header-top-row">
-          <p class="header-eyebrow">Lorcana · duels.ink</p>
+      <header class="text-center mb-12">
+        <div class="flex justify-center items-center gap-4 mb-1 flex-wrap">
+          <p class="font-display text-[11px] tracking-[.3em] text-gold uppercase opacity-80">
+            Lorcana · duels.ink
+          </p>
           <button class="change-file-btn" id="changeFileBtn">📁 Changer de fichier</button>
         </div>
-        <h1>The Inkwell Chronicles</h1>
-        <p class="header-meta" id="headerMeta">Chargement…</p>
+        <h1 class="font-display font-black gradient-title leading-tight mb-2"
+            style="font-size:clamp(28px,5vw,58px);letter-spacing:.04em">
+          The Inkwell Chronicles
+        </h1>
+        <p class="text-muted italic text-sm" id="headerMeta">Chargement…</p>
         <div class="header-divider"><div class="header-divider-gem"></div></div>
       </header>
 
-      <!-- FILTER BAR -->
+      <!-- FILTRE -->
       <div class="filter-bar">
         <span class="filter-label">Deck</span>
         <div class="filter-pills" id="filterPills"></div>
         <span class="filter-count" id="filterCount"></span>
       </div>
 
-      <!-- KPI ROW -->
-      <div class="kpi-row">
+      <!-- KPIs -->
+      <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
         <div class="kpi" style="--kpi-color:var(--gold-light)">
           <span class="kpi-value" id="kpiTotal">—</span>
           <span class="kpi-label">Parties</span>
@@ -120,23 +171,25 @@
         </div>
       </div>
 
-      <!-- ─────── MMR EVOLUTION ─────── -->
+      <!-- ─── MMR EVOLUTION ─── -->
       <div class="section-label">Progression MMR</div>
-      <div class="card card-full">
+      <div class="card mb-6">
         <div class="card-title">Évolution du MMR</div>
         <div class="card-subtitle">Chaque point = une partie · vert = victoire · rouge = défaite</div>
         <div class="mmr-badge" id="mmrBadge"></div>
         <div class="chart-wrap" style="height:260px"><canvas id="mmrChart"></canvas></div>
       </div>
 
-      <!-- ─────── WIN/LOSS + DAILY ─────── -->
-      <div class="grid-2">
+      <!-- ─── WIN/LOSS + DAILY ─── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div class="card">
-          <div class="card-title">Victoires & Défaites</div>
+          <div class="card-title">Victoires &amp; Défaites</div>
           <div class="card-subtitle">Ratio global sur la sélection</div>
           <div class="donut-wrapper">
             <div class="donut-chart">
-              <div class="chart-wrap" style="width:150px;height:150px"><canvas id="winLossChart"></canvas></div>
+              <div class="chart-wrap" style="width:150px;height:150px">
+                <canvas id="winLossChart"></canvas>
+              </div>
             </div>
             <div class="donut-legend" id="wlLegend"></div>
           </div>
@@ -148,9 +201,9 @@
         </div>
       </div>
 
-      <!-- ─────── DECK WINRATES ─────── -->
+      <!-- ─── DECK WINRATES ─── -->
       <div class="section-label">Analyse par Deck</div>
-      <div class="grid-2">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div class="card">
           <div class="card-title">Winrate — mon deck</div>
           <div class="card-subtitle">Par combinaison de couleurs jouées</div>
@@ -163,9 +216,9 @@
         </div>
       </div>
 
-      <!-- ─────── STATS DE JEU ─────── -->
+      <!-- ─── STATS DE JEU ─── -->
       <div class="section-label">Statistiques de Jeu</div>
-      <div class="grid-3">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         <div class="card">
           <div class="card-title">Ordre de jeu</div>
           <div class="card-subtitle">OTP (premier) vs OTD (second)</div>
@@ -184,8 +237,8 @@
         </div>
       </div>
 
-      <!-- ─────── SCATTER + TOURS ─────── -->
-      <div class="grid-2">
+      <!-- ─── SCATTER + TOURS ─── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div class="card">
           <div class="card-title">Lore toi vs Adversaire</div>
           <div class="card-subtitle">Chaque partie · vert = victoire · rouge = défaite</div>
@@ -198,9 +251,9 @@
         </div>
       </div>
 
-      <!-- ─────── RÉCENCE ─────── -->
-      <div class="section-label">Récence & Performance</div>
-      <div class="grid-2">
+      <!-- ─── RÉCENCE ─── -->
+      <div class="section-label">Récence &amp; Performance</div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div class="card">
           <div class="card-title">Dernières 20 parties</div>
           <div class="card-subtitle">V = Victoire · D = Défaite · ordre chronologique</div>
@@ -213,19 +266,22 @@
         </div>
       </div>
 
-      <!-- ─────── ANALYSE CARTES CLÉS ─────── -->
+      <!-- ─── ANALYSE CARTES ─── -->
       <div class="section-label">Analyse par Carte</div>
-      <div class="card card-full">
+      <div class="card mb-6">
         <div class="card-title">Winrate par carte clé</div>
-        <div class="card-subtitle">Cartes présentes dans la Decklist · top 20 par nombre de parties · vert ≥ 60% · or ≥ 45% · rouge &lt; 45%</div>
+        <div class="card-subtitle">
+          Cartes présentes dans la Decklist · top 20 par nombre de parties ·
+          vert ≥ 60% · or ≥ 45% · rouge &lt; 45%
+        </div>
         <div id="cardAnalysisContent">
           <div class="chart-wrap" style="height:460px"><canvas id="cardChart"></canvas></div>
         </div>
       </div>
 
-      <!-- ─────── HEATMAP + MOMENTUM ─────── -->
+      <!-- ─── HEATMAP + MOMENTUM ─── -->
       <div class="section-label">Analyse Temporelle</div>
-      <div class="grid-2">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div class="card">
           <div class="card-title">Heatmap heure / jour</div>
           <div class="card-subtitle">Winrate selon l'heure et le jour de la semaine (UTC)</div>
@@ -241,22 +297,24 @@
         <div class="card">
           <div class="card-title">Momentum — winrate glissant</div>
           <div class="card-subtitle">Fenêtre de 5 parties · seuil 50% en pointillé</div>
-          <div id="momentumStreaks" style="margin-bottom:10px;display:flex;flex-wrap:wrap;gap:8px"></div>
+          <div id="momentumStreaks" class="flex flex-wrap gap-2 mb-3"></div>
           <div class="chart-wrap" style="height:200px"><canvas id="momentumChart"></canvas></div>
         </div>
       </div>
 
-      <!-- ─────── MATCHUP PREDICTOR ─────── -->
-      <div class="section-label">Prédiction & Matchups</div>
-      <div class="card card-full">
+      <!-- ─── MATCHUP PREDICTOR ─── -->
+      <div class="section-label">Prédiction &amp; Matchups</div>
+      <div class="card mb-6">
         <div class="card-title">Prédicteur de matchup</div>
-        <div class="card-subtitle">Winrate historique contre chaque deck adverse · filtré par le deck sélectionné</div>
+        <div class="card-subtitle">
+          Winrate historique contre chaque deck adverse · filtré par le deck sélectionné
+        </div>
         <div id="predictorContent"></div>
       </div>
 
-      <!-- ─────── WEEK COMPARISON + BEST/WORST ─────── -->
+      <!-- ─── SUIVI DE PROGRESSION ─── -->
       <div class="section-label">Suivi de Progression</div>
-      <div class="grid-2">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div class="card">
           <div class="card-title">Cette semaine vs semaine précédente</div>
           <div class="card-subtitle">Comparaison des deux dernières semaines (toutes données)</div>
@@ -269,50 +327,52 @@
         </div>
       </div>
 
-      <!-- ─────── MMR GOALS ─────── -->
-      <div class="card card-full" style="margin-bottom:24px">
+      <!-- ─── OBJECTIF MMR ─── -->
+      <div class="card mb-6">
         <div class="card-title">Objectif MMR</div>
         <div class="card-subtitle">Définis un palier cible et suis ta progression</div>
         <div class="goal-input-row">
           <label class="goal-label">Objectif :</label>
-          <input type="number" id="mmrGoalInput" class="goal-input" placeholder="ex: 1400" min="0" max="9999">
+          <input type="number" id="mmrGoalInput" class="goal-input"
+                 placeholder="ex: 1400" min="0" max="9999">
           <span class="goal-hint">MMR</span>
         </div>
-        <div id="mmrGoalBar" style="margin-top:16px"></div>
-        <div id="mmrGoalInfo" style="margin-top:8px;font-size:14px"></div>
+        <div id="mmrGoalBar"  class="mt-4"></div>
+        <div id="mmrGoalInfo" class="mt-2 text-sm"></div>
       </div>
 
-      <!-- ─────── TABLE ─────── -->
+      <!-- ─── JOURNAL DES PARTIES ─── -->
       <div class="section-label">Journal des Parties</div>
-      <div class="card card-full">
+      <div class="card mb-6">
         <div class="card-title">20 dernières parties</div>
         <div class="card-subtitle">Résultats détaillés · du plus récent au plus ancien</div>
         <div class="table-wrap">
           <table class="data-table">
-            <thead><tr>
-              <th>Date</th><th>Résultat</th><th>Adversaire</th>
-              <th>Mon deck</th><th>Deck adverse</th>
-              <th>Lore moi</th><th>Lore eux</th>
-              <th>Tours</th><th>Durée</th><th>MMR Δ</th>
-            </tr></thead>
+            <thead>
+              <tr>
+                <th>Date</th><th>Résultat</th><th>Adversaire</th>
+                <th>Mon deck</th><th>Deck adverse</th>
+                <th>Lore moi</th><th>Lore eux</th>
+                <th>Tours</th><th>Durée</th><th>MMR Δ</th>
+              </tr>
+            </thead>
             <tbody id="tableBody"></tbody>
           </table>
         </div>
       </div>
 
-      <footer>
-        Inkwell Stats · données <a href="https://duels.ink" target="_blank" rel="noopener">duels.ink</a>
+      <footer class="text-center mt-14 pt-6 border-t border-lborder text-muted text-sm italic">
+        Inkwell Stats · données
+        <a href="https://duels.ink" target="_blank" rel="noopener" class="text-gold no-underline hover:underline">
+          duels.ink
+        </a>
         · <button class="footer-link" id="footerChangeBtn">Changer de fichier</button>
       </footer>
 
     </div>
   </div>
 
-  <!-- Scripts (order matters) -->
-  <script src="js/parser.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/charts.js"></script>
-  <script src="js/advanced.js"></script>
-  <script src="js/app.js"></script>
+  <!-- Point d'entrée unique — ES module -->
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>
