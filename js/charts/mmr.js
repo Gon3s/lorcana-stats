@@ -1,10 +1,8 @@
 /**
- * mmr.js — Graphiques liés au MMR (SRP)
- * renderMMRChart : évolution ligne
- * renderMMRByDeck : delta moyen par deck
+ * mmr.js — Graphique d'évolution du MMR (SRP)
  */
 
-import { destroyChart, registerChart, GRID, avg, groupBy } from './registry.js';
+import { destroyChart, registerChart, GRID } from './registry.js';
 
 export function renderMMRChart(games) {
   destroyChart('mmr');
@@ -49,41 +47,6 @@ export function renderMMRChart(games) {
       scales: {
         x: { grid: GRID, ticks: { maxTicksLimit: 14, maxRotation: 45 } },
         y: { grid: GRID },
-      },
-    },
-  }));
-}
-
-export function renderMMRByDeck(games) {
-  destroyChart('mmrDeck');
-
-  const byDeck = groupBy(games, 'myColors');
-  const labels = Object.keys(byDeck);
-  const avgs   = labels.map(k => parseFloat(
-    avg(byDeck[k].map(g => g.mmrAfter - g.mmrBefore)).toFixed(1)
-  ));
-
-  registerChart('mmrDeck', new Chart(document.getElementById('mmrDeckChart'), {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        data:            avgs,
-        backgroundColor: avgs.map(v => v >= 0 ? 'rgba(78,204,163,.8)' : 'rgba(232,93,122,.8)'),
-        borderRadius:    6,
-      }],
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: {
-          label: ctx => ` Δ MMR moy: ${ctx.parsed.y >= 0 ? '+' : ''}${ctx.parsed.y}`,
-        }},
-      },
-      scales: {
-        x: { grid: { display: false } },
-        y: { grid: GRID, ticks: { callback: v => (v > 0 ? '+' : '') + v } },
       },
     },
   }));
