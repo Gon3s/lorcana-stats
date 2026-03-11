@@ -29,7 +29,7 @@ jobs:
         run: |
           echo "→ Vérification syntaxe ES modules..."
           find js -name "*.js" | sort | while read f; do
-            node --input-type=module < "$f" 2>&1 && echo "  ✓ $f" || { echo "  ✗ $f"; exit 1; }
+            node --check "$f" 2>&1 && echo "  ✓ $f" || { echo "  ✗ $f"; exit 1; }
           done
 
   # ── Vérification des fichiers référencés dans index.html ─────────────────
