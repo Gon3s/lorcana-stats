@@ -11,6 +11,33 @@ on:
   workflow_dispatch:
 
 jobs:
+  # ── Build CSS Tailwind ────────────────────────────────────────────────────
+  build:
+    name: 🎨 Build CSS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Installer les dépendances
+        run: npm ci
+
+      - name: 🏗️ Générer css/tailwind.css
+        run: npm run build
+
+      - name: 📤 Uploader le CSS généré
+        uses: actions/upload-artifact@v4
+        with:
+          name: tailwind-css
+          path: css/tailwind.css
+
   # ── Vérification syntaxe JavaScript ──────────────────────────────────────
   lint-js:
     name: 🔍 Syntaxe JS
@@ -36,10 +63,17 @@ jobs:
   check-assets:
     name: 📂 Intégrité des assets
     runs-on: ubuntu-latest
+    needs: [build]
 
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4
+
+      - name: 📥 Récupérer le CSS généré
+        uses: actions/download-artifact@v4
+        with:
+          name: tailwind-css
+          path: css/
 
       - name: 🔗 Vérifier que les fichiers référencés existent
         run: |
@@ -60,7 +94,7 @@ jobs:
   ci-success:
     name: 🎉 CI réussie
     runs-on: ubuntu-latest
-    needs: [lint-js, check-assets]
+    needs: [build, lint-js, check-assets]
 
     steps:
       - name: ✅ Tous les checks sont passés

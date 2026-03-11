@@ -4,12 +4,9 @@
 
   "name": "inkwell-stats",
 
-  "builds": [
-    {
-      "src": "**",
-      "use": "@vercel/static"
-    }
-  ],
+  "buildCommand": "npm run build",
+  "outputDirectory": ".",
+  "installCommand": "npm ci",
 
   "headers": [
     {
