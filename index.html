@@ -188,7 +188,7 @@
 
       <!-- ─── STATS DE JEU ─── -->
       <div class="section-label">Statistiques de Jeu</div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div class="card">
           <div class="card-title">Ordre de jeu</div>
           <div class="card-subtitle">OTP (premier) vs OTD (second)</div>
@@ -200,76 +200,23 @@
           <div class="card-subtitle">Distribution en minutes</div>
           <div class="chart-wrap" style="height:180px"><canvas id="durChart"></canvas></div>
         </div>
-        <div class="card">
-          <div class="card-title">Lore moyen — victoires</div>
-          <div class="card-subtitle">Score moyen par deck quand tu gagnes</div>
-          <div class="chart-wrap" style="height:180px"><canvas id="loreChart"></canvas></div>
-        </div>
-      </div>
-
-      <!-- ─── SCATTER + TOURS ─── -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div class="card">
-          <div class="card-title">Lore toi vs Adversaire</div>
-          <div class="card-subtitle">Chaque partie · vert = victoire · rouge = défaite</div>
-          <div class="chart-wrap" style="height:220px"><canvas id="scatterChart"></canvas></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Nombre de tours joués</div>
-          <div class="card-subtitle">Parties courtes vs longues</div>
-          <div class="chart-wrap" style="height:220px"><canvas id="turnsChart"></canvas></div>
-        </div>
       </div>
 
       <!-- ─── RÉCENCE ─── -->
       <div class="section-label">Récence &amp; Performance</div>
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div class="card">
-          <div class="card-title">Dernières 20 parties</div>
-          <div class="card-subtitle">V = Victoire · D = Défaite · ordre chronologique</div>
-          <div class="streak-row" id="streakRow"></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Δ MMR moyen par deck</div>
-          <div class="card-subtitle">MMR gagné ou perdu en moyenne par partie</div>
-          <div class="chart-wrap" style="height:180px"><canvas id="mmrDeckChart"></canvas></div>
-        </div>
-      </div>
-
-      <!-- ─── ANALYSE CARTES ─── -->
-      <div class="section-label">Analyse par Carte</div>
       <div class="card mb-6">
-        <div class="card-title">Winrate par carte clé</div>
-        <div class="card-subtitle">
-          Cartes présentes dans la Decklist · top 20 par nombre de parties ·
-          vert ≥ 60% · or ≥ 45% · rouge &lt; 45%
-        </div>
-        <div id="cardAnalysisContent">
-          <div class="chart-wrap" style="height:460px"><canvas id="cardChart"></canvas></div>
-        </div>
+        <div class="card-title">Dernières 20 parties</div>
+        <div class="card-subtitle">V = Victoire · D = Défaite · ordre chronologique</div>
+        <div class="streak-row" id="streakRow"></div>
       </div>
 
-      <!-- ─── HEATMAP + MOMENTUM ─── -->
+      <!-- ─── MOMENTUM ─── -->
       <div class="section-label">Analyse Temporelle</div>
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div class="card">
-          <div class="card-title">Heatmap heure / jour</div>
-          <div class="card-subtitle">Winrate selon l'heure et le jour de la semaine (UTC)</div>
-          <div class="heatmap-wrap">
-            <div class="heatmap-grid" id="heatmapGrid"></div>
-            <div class="heatmap-legend">
-              <span class="hm-leg-bad">0%</span>
-              <div class="hm-leg-bar"></div>
-              <span class="hm-leg-good">100%</span>
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-title">Momentum — winrate glissant</div>
-          <div class="card-subtitle">Fenêtre de 5 parties · seuil 50% en pointillé</div>
-          <div id="momentumStreaks" class="flex flex-wrap gap-2 mb-3"></div>
-          <div class="chart-wrap" style="height:200px"><canvas id="momentumChart"></canvas></div>
-        </div>
+      <div class="card mb-6">
+        <div class="card-title">Momentum — winrate glissant</div>
+        <div class="card-subtitle">Fenêtre de 5 parties · seuil 50% en pointillé</div>
+        <div id="momentumStreaks" class="flex flex-wrap gap-2 mb-3"></div>
+        <div class="chart-wrap" style="height:200px"><canvas id="momentumChart"></canvas></div>
       </div>
 
       <!-- ─── MATCHUP PREDICTOR ─── -->
@@ -295,20 +242,6 @@
           <div class="card-subtitle">Performance récente par combinaison (toutes données)</div>
           <div id="bestWorstContent"></div>
         </div>
-      </div>
-
-      <!-- ─── OBJECTIF MMR ─── -->
-      <div class="card mb-6">
-        <div class="card-title">Objectif MMR</div>
-        <div class="card-subtitle">Définis un palier cible et suis ta progression</div>
-        <div class="goal-input-row">
-          <label class="goal-label">Objectif :</label>
-          <input type="number" id="mmrGoalInput" class="goal-input"
-                 placeholder="ex: 1400" min="0" max="9999">
-          <span class="goal-hint">MMR</span>
-        </div>
-        <div id="mmrGoalBar"  class="mt-4"></div>
-        <div id="mmrGoalInfo" class="mt-2 text-sm"></div>
       </div>
 
       <!-- ─── JOURNAL DES PARTIES ─── -->

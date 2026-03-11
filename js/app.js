@@ -14,18 +14,14 @@ import { buildFilterBar }                                       from './ui/filte
 import { updateHeader, renderTable, renderStreak }             from './ui/dashboard.js';
 
 // Graphiques de base
-import { renderMMRChart, renderMMRByDeck }                     from './charts/mmr.js';
+import { renderMMRChart }                                       from './charts/mmr.js';
 import { renderWinLossDonut, renderDailyChart, renderDeckBars } from './charts/distribution.js';
-import { renderTurnOrder, renderDurationChart, renderLoreChart,
-         renderScatter, renderTurnsChart }                      from './charts/gameplay.js';
+import { renderTurnOrder, renderDurationChart }                 from './charts/gameplay.js';
 
 // Analyses avancées
-import { renderCardAnalysis }                                   from './advanced/cards.js';
-import { renderHeatmap }                                        from './advanced/heatmap.js';
 import { renderMomentum }                                       from './advanced/momentum.js';
 import { renderMatchupPredictor }                               from './advanced/predictor.js';
 import { renderWeekComparison, renderBestWorstDeck }            from './advanced/weekly.js';
-import { renderMMRGoals }                                       from './advanced/goals.js';
 
 // ── Rendu complet du dashboard ─────────────────────────────────────────────
 
@@ -43,21 +39,14 @@ function renderAll(games) {
   renderDeckBars(games, 'oppColors', 'oppDeckBars', 2);
   renderTurnOrder(games);
   renderDurationChart(games);
-  renderLoreChart(games);
-  renderScatter(games);
-  renderTurnsChart(games);
-  renderMMRByDeck(games);
 
   // Récence
   renderStreak(games);
   renderTable(games);
 
   // Analyses avancées (données filtrées)
-  renderCardAnalysis(games);
-  renderHeatmap(games);
   renderMomentum(games);
   renderMatchupPredictor(games, store.activeDeck);
-  renderMMRGoals(games);
 
   // Toujours sur l'ensemble des données (indépendant du filtre deck)
   renderWeekComparison(store.allGames);
