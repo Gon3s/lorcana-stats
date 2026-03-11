@@ -590,3 +590,47 @@ body::before {
 @media (max-width: 640px) {
   .filter-bar { padding: 14px 16px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   STATS PAR ENCRE — WINRATES
+   ═══════════════════════════════════════════════════════════════ */
+
+.ink-stat-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.ink-stat-row:last-child { border-bottom: none; }
+.ink-stat-icon { flex-shrink: 0; display: flex; align-items: center; }
+.ink-stat-body { flex: 1; min-width: 0; }
+.ink-stat-header {
+  display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px;
+}
+.ink-stat-name  { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 600; }
+.ink-stat-pct   { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; margin-left: auto; }
+.ink-stat-games { font-size: 11px; color: var(--muted); }
+.ink-bar-track  { height: 6px; background: var(--raised); border-radius: 3px; overflow: hidden; }
+.ink-bar-fill   { height: 100%; border-radius: 3px; transition: width .8s ease; }
+
+/* ═══════════════════════════════════════════════════════════════
+   MATRICE DE MATCHUPS
+   ═══════════════════════════════════════════════════════════════ */
+
+.matrix-scroll  { overflow-x: auto; }
+.matchup-table  { width: 100%; border-collapse: collapse; font-size: 12px; }
+.matchup-table th,
+.matchup-table td { padding: 6px 4px; text-align: center; border: 1px solid var(--border); }
+.matrix-head    { vertical-align: bottom; }
+.matrix-row-head{ text-align: center; white-space: nowrap; }
+.matrix-corner  {
+  text-align: left; padding: 4px 6px; font-size: 10px;
+  color: var(--muted); line-height: 1.3; background: var(--raised);
+}
+.matrix-corner-my, .matrix-corner-opp { display: block; }
+.matrix-corner-opp { color: var(--gold); }
+.matrix-cell    {
+  font-family: 'Cinzel', serif; font-size: 12px; font-weight: 600;
+  min-width: 42px; border-radius: 0;
+}
+.matrix-mirror  { color: var(--border); background: var(--raised); }
+.matrix-na      { color: var(--border); font-size: 14px; }
+.matrix-note    { font-size: 11px; color: var(--muted); margin-top: 8px; font-style: italic; }

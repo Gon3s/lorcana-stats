@@ -220,6 +220,21 @@
         <div class="chart-wrap" style="height:200px"><canvas id="momentumChart"></canvas></div>
       </div>
 
+      <!-- ─── STATS PAR ENCRE ─── -->
+      <div class="section-label">Statistiques par Encre</div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div class="card">
+          <div class="card-title">Winrate par encre jouée</div>
+          <div class="card-subtitle">Performance de chaque encre dans tes decks</div>
+          <div id="inkWinrates"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Matrice de matchups</div>
+          <div class="card-subtitle">Mon encre (ligne) vs encre adversaire (colonne)</div>
+          <div id="matchupMatrix"></div>
+        </div>
+      </div>
+
       <!-- ─── MATCHUP PREDICTOR ─── -->
       <div class="section-label">Prédiction &amp; Matchups</div>
       <div class="card mb-6">

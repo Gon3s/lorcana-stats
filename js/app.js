@@ -22,6 +22,7 @@ import { renderTurnOrder, renderDurationChart }                 from './charts/g
 import { renderMomentum }                                       from './advanced/momentum.js';
 import { renderMatchupPredictor }                               from './advanced/predictor.js';
 import { renderWeekComparison, renderBestWorstDeck }            from './advanced/weekly.js';
+import { renderInkWinrates, renderMatchupMatrix }               from './advanced/inkstats.js';
 
 // ── Rendu complet du dashboard ─────────────────────────────────────────────
 
@@ -47,6 +48,10 @@ function renderAll(games) {
   // Analyses avancées (données filtrées)
   renderMomentum(games);
   renderMatchupPredictor(games, store.activeDeck);
+
+  // Stats encres — toujours sur toutes les données
+  renderInkWinrates(store.allGames, 'inkWinrates');
+  renderMatchupMatrix(store.allGames, 'matchupMatrix');
 
   // Toujours sur l'ensemble des données (indépendant du filtre deck)
   renderWeekComparison(store.allGames);

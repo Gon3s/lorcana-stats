@@ -1,14 +1,23 @@
 /**
  * ink.js — Utilitaire d'affichage des encres Lorcana
- * Convertit les noms d'encres en icônes SVG.
+ * Convertit les noms d'encres en icônes PNG officielles.
  */
 
+export const INK_COLOR = {
+  amber:    '#D4900A',
+  amethyst: '#8B30B0',
+  emerald:  '#1A9A50',
+  ruby:     '#C01830',
+  sapphire: '#1A60C0',
+  steel:    '#607080',
+};
+
 const INK_IMG = {
-  amber:    'assets/inks/amber.svg',
-  amethyst: 'assets/inks/amethyst.svg',
-  emerald:  'assets/inks/emerald.svg',
-  ruby:     'assets/inks/ruby.svg',
-  sapphire: 'assets/inks/sapphire.svg',
+  amber:    'assets/inks/amber.png',
+  amethyst: 'assets/inks/amethyst.png',
+  emerald:  'assets/inks/emerald.png',
+  ruby:     'assets/inks/ruby.png',
+  sapphire: 'assets/inks/sapphire.png',
   steel:    'assets/inks/steel.svg',
 };
 
