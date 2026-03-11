@@ -1,0 +1,67 @@
+name: ✅ CI — Validation
+
+# Gitflow : vérifie toutes les PRs vers develop et main
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+
+  # Permet aussi de lancer manuellement pour debug
+  workflow_dispatch:
+
+jobs:
+  # ── Vérification syntaxe JavaScript ──────────────────────────────────────
+  lint-js:
+    name: 🔍 Syntaxe JS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 🔎 Vérifier la syntaxe de tous les modules
+        run: |
+          echo "→ Vérification syntaxe ES modules..."
+          find js -name "*.js" | sort | while read f; do
+            node --input-type=module < "$f" 2>&1 && echo "  ✓ $f" || { echo "  ✗ $f"; exit 1; }
+          done
+
+  # ── Vérification des fichiers référencés dans index.html ─────────────────
+  check-assets:
+    name: 📂 Intégrité des assets
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🔗 Vérifier que les fichiers référencés existent
+        run: |
+          echo "→ Vérification des assets..."
+          # Extraire les src/href locaux de index.html
+          grep -oP '(src|href)="(?!https?://|#)[^"]*"' index.html \
+            | grep -oP '"[^"]+"' | tr -d '"' \
+            | while read asset; do
+                if [ -f "$asset" ]; then
+                  echo "  ✓ $asset"
+                else
+                  echo "  ✗ MANQUANT: $asset"
+                  exit 1
+                fi
+              done
+
+  # ── Résumé final ──────────────────────────────────────────────────────────
+  ci-success:
+    name: 🎉 CI réussie
+    runs-on: ubuntu-latest
+    needs: [lint-js, check-assets]
+
+    steps:
+      - name: ✅ Tous les checks sont passés
+        run: echo "CI OK — prêt pour merge."

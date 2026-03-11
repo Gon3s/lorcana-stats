@@ -1,0 +1,12 @@
+# Contrôle de version
+.git
+.gitignore
+
+# CI/CD
+.github
+
+# Documentation
+README.md
+
+# Données d'exemple — retirer la ligne ci-dessous si tu veux les inclure dans le déploiement
+# data/game-history.csv
