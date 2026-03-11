@@ -4,6 +4,7 @@
  */
 
 import { destroyChart, registerChart, groupBy, winStats, avg, GRID } from './registry.js';
+import { inkBadge } from '../utils/ink.js';
 
 // ── Win/Loss Donut ─────────────────────────────────────────────────────────
 
@@ -108,7 +109,7 @@ export function renderDeckBars(games, colorKey, containerId, minGames = 1) {
     const color = s.rate >= 50 ? '#4ecca3' : '#e85d7a';
     return `
       <div class="bar-row">
-        <div class="bar-label" title="${s.deck}">${s.deck}</div>
+        <div class="bar-label" title="${s.deck}">${inkBadge(s.deck, 18)}</div>
         <div class="bar-track">
           <div class="bar-fill" style="width:${s.rate.toFixed(1)}%;background:${color}"></div>
         </div>

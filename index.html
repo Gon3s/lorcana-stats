@@ -29,11 +29,12 @@
 
       <div class="upload-header text-center">
         <div class="flex justify-center gap-3 mb-3">
-          <div class="gem gem-amethyst"></div>
-          <div class="gem gem-sapphire"></div>
-          <div class="gem gem-gold"></div>
-          <div class="gem gem-emerald"></div>
-          <div class="gem gem-ruby"></div>
+          <img src="assets/inks/amethyst.svg" alt="Amethyst" class="gem-icon" style="animation-delay:0s">
+          <img src="assets/inks/sapphire.svg"  alt="Sapphire"  class="gem-icon" style="animation-delay:.2s">
+          <img src="assets/inks/amber.svg"     alt="Amber"     class="gem-icon" style="animation-delay:.4s">
+          <img src="assets/inks/emerald.svg"   alt="Emerald"   class="gem-icon" style="animation-delay:.6s">
+          <img src="assets/inks/ruby.svg"      alt="Ruby"      class="gem-icon" style="animation-delay:.8s">
+          <img src="assets/inks/steel.svg"     alt="Steel"     class="gem-icon" style="animation-delay:1s">
         </div>
         <h1 class="font-display font-black gradient-title text-5xl tracking-widest leading-tight mb-1">
           Inkwell Stats
@@ -217,6 +218,21 @@
         <div class="card-subtitle">Fenêtre de 5 parties · seuil 50% en pointillé</div>
         <div id="momentumStreaks" class="flex flex-wrap gap-2 mb-3"></div>
         <div class="chart-wrap" style="height:200px"><canvas id="momentumChart"></canvas></div>
+      </div>
+
+      <!-- ─── STATS PAR ENCRE ─── -->
+      <div class="section-label">Statistiques par Encre</div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div class="card">
+          <div class="card-title">Winrate par encre jouée</div>
+          <div class="card-subtitle">Performance de chaque encre dans tes decks</div>
+          <div id="inkWinrates"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Matrice de matchups</div>
+          <div class="card-subtitle">Mon encre (ligne) vs encre adversaire (colonne)</div>
+          <div id="matchupMatrix"></div>
+        </div>
       </div>
 
       <!-- ─── MATCHUP PREDICTOR ─── -->
