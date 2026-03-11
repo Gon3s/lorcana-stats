@@ -188,6 +188,7 @@ body::before {
 }
 .filter-pills { display: flex; flex-wrap: wrap; gap: 8px; flex: 1; }
 .filter-pill {
+  display: inline-flex; align-items: center; gap: 5px;
   padding: 5px 16px; border-radius: 20px;
   font-size: 13px; font-family: 'Cinzel', serif; letter-spacing: .03em;
   cursor: pointer; border: 1px solid var(--border);
@@ -232,7 +233,7 @@ body::before {
 
 /* ── Barres deck winrate ── */
 .bar-row  { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-.bar-label{ width: 145px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+.bar-label{ width: 50px; display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
 .bar-track{ flex: 1; height: 8px; background: var(--raised); border-radius: 4px; overflow: hidden; }
 .bar-fill { height: 100%; border-radius: 4px; transition: width .9s cubic-bezier(.4,0,.2,1); }
 .bar-stat { width: 68px; text-align: right; font-size: 13px; color: var(--muted); flex-shrink: 0; }
@@ -312,7 +313,26 @@ body::before {
   animation: fadeUp .5s ease both;
 }
 
-/* Gems animés */
+/* Gems animés (images SVG) */
+.gem-icon {
+  width: 28px; height: 28px;
+  animation: pulse-gem 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px rgba(201,168,76,.3));
+}
+
+/* Icônes d'encres inline (tableau, barres, pills) */
+.ink-icon {
+  display: inline-block; vertical-align: middle;
+  filter: drop-shadow(0 0 3px rgba(255,255,255,.15));
+}
+.ink-unknown {
+  font-size: 11px; color: var(--muted); font-style: italic;
+}
+
+/* Cellules encres dans le tableau */
+.td-inks { display: flex; align-items: center; gap: 4px; }
+
+/* Gems anciens (keep pour compatibilité loader) */
 .gem {
   width: 14px; height: 14px;
   transform: rotate(45deg);

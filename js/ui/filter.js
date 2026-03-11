@@ -3,6 +3,8 @@
  * Responsabilité unique : construire les pills et notifier les changements.
  */
 
+import { inkPillContent } from '../utils/ink.js';
+
 function updateFilterCount(n) {
   document.getElementById('filterCount').innerHTML =
     `<span>${n}</span> partie${n > 1 ? 's' : ''}`;
@@ -11,7 +13,7 @@ function updateFilterCount(n) {
 function createPill(label, value, isActive, allGames, onFilter) {
   const btn = document.createElement('button');
   btn.className    = 'filter-pill' + (isActive ? ' active' : '');
-  btn.textContent  = label;
+  btn.innerHTML    = inkPillContent(value);
   btn.dataset.value = value;
 
   btn.addEventListener('click', () => {
