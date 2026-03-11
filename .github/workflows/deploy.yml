@@ -1,33 +1,34 @@
-name: Deploy to GitHub Pages
+name: 🚀 Deploy — GitHub Pages (Production)
 
+# Gitflow : seul main déclenche le déploiement en production
 on:
   push:
     branches:
       - main
 
-  # Permet de déclencher manuellement depuis l'onglet Actions
+  # Déclenchement manuel depuis l'onglet Actions (ex: hotfix urgent)
   workflow_dispatch:
 
-# Permissions nécessaires pour déployer sur GitHub Pages
 permissions:
   contents: read
-  pages: write
+  pages:    write
   id-token: write
 
-# Un seul déploiement à la fois, annule celui en cours si un nouveau push arrive
+# Un seul déploiement à la fois ; annule celui en cours si un nouveau push arrive
 concurrency:
   group: pages
   cancel-in-progress: true
 
 jobs:
   deploy:
+    name: 📦 Build & Deploy
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: 📥 Checkout du repo
+      - name: 📥 Checkout
         uses: actions/checkout@v4
 
       - name: ⚙️ Configurer GitHub Pages
@@ -35,11 +36,11 @@ jobs:
         with:
           enablement: true
 
-      - name: 📦 Uploader les fichiers statiques
+      - name: 📂 Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
 
-      - name: 🚀 Déployer sur GitHub Pages
+      - name: 🌐 Déployer
         id: deployment
         uses: actions/deploy-pages@v4

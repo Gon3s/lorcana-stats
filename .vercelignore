@@ -1,0 +1,21 @@
+# Dépendances (générées au build par Vercel)
+node_modules/
+
+# Sources Tailwind (compilées dans css/tailwind.css au build)
+css/tailwind.input.css
+tailwind.config.js
+package.json
+package-lock.json
+
+# Contrôle de version
+.git
+.gitignore
+
+# CI/CD
+.github
+
+# Documentation
+README.md
+
+# Données d'exemple — retirer la ligne ci-dessous si tu veux les inclure dans le déploiement
+# data/game-history.csv
