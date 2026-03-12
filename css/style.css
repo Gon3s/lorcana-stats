@@ -659,11 +659,16 @@ body::before {
 .matrix-corner-opp { color: var(--gold); }
 .matrix-cell    {
   font-family: 'Cinzel', serif; font-size: 12px; font-weight: 600;
-  min-width: 42px; border-radius: 0;
+  min-width: 52px; border-radius: 0;
 }
 .matrix-mirror  { color: var(--border); background: var(--raised); }
 .matrix-na      { color: var(--border); font-size: 14px; }
 .matrix-note    { font-size: 11px; color: var(--muted); margin-top: 8px; font-style: italic; }
+/* Icônes bicolor dans les en-têtes de la matrice (combinaison de 2 encres) */
+.matrix-combo-head {
+  display: flex; justify-content: center; gap: 2px; flex-wrap: wrap;
+  padding: 2px 0;
+}
 
 /* ═══════════════════════════════════════════════════════════════
    PAGE DECKS
