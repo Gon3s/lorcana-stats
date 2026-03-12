@@ -45,7 +45,7 @@ lorcana-stats/
 │   └── utils/
 │       └── ink.js              # Lorcana ink/color name mappings and badge HTML helpers
 ├── assets/
-│   └── inks/                   # SVG icons for each ink color (amber, amethyst, emerald, ruby, sapphire, steel)
+│   └── inks/                   # Icônes PNG officielles Lorcana (amber, amethyst, emerald, ruby, sapphire, steel) + SVG conservés
 ├── data/
 │   └── game-history.csv        # Sample CSV for manual testing
 └── .github/
@@ -211,9 +211,7 @@ Always prefer these semantic class names over arbitrary hex values in HTML.
 
 The six ink colors are: **Amber**, **Amethyst**, **Emerald**, **Ruby**, **Sapphire**, **Steel**.
 
-Use `js/utils/ink.js` helpers to render ink badges and map color names to hex values. SVG icons live in `assets/inks/<color>.svg`.
-
-> **Known issue**: `ink.js` references `.png` extensions, but actual assets are `.svg`. Fix to `.svg` when touching that file.
+Use `js/utils/ink.js` helpers to render ink badges and map color names to hex values. PNG icons live in `assets/inks/<color>.png` (les fichiers SVG sont conservés mais ne sont plus utilisés).
 
 ---
 

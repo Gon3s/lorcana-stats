@@ -65,9 +65,10 @@ export function parseCSV(csvText) {
       turnOrder: (row['Turn Order']     || '').trim(),
       myColors:  (row['My Colors']      || '').trim(),
       oppColors: (row['Opponent Colors']|| '').trim(),
-      mmrBefore: parseInt(row['MMR Before'])    || 0,
-      mmrAfter:  parseInt(row['MMR After'])     || 0,
-      decklist:  parseDecklist(row['Decklist']  || ''),
+      mmrBefore:   parseInt(row['MMR Before'])    || 0,
+      mmrAfter:    parseInt(row['MMR After'])     || 0,
+      matchFormat: (row['Match Format'] || '').trim(),
+      decklist:    parseDecklist(row['Decklist'] || ''),
     };
   }).filter(g => g.result && g.myColors);
 

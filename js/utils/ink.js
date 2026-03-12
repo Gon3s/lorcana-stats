@@ -18,7 +18,7 @@ const INK_IMG = {
   emerald:  'assets/inks/emerald.png',
   ruby:     'assets/inks/ruby.png',
   sapphire: 'assets/inks/sapphire.png',
-  steel:    'assets/inks/steel.svg',
+  steel:    'assets/inks/steel.png',
 };
 
 /**

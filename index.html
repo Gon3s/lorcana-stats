@@ -29,12 +29,12 @@
 
       <div class="upload-header text-center">
         <div class="flex justify-center gap-3 mb-3">
-          <img src="assets/inks/amethyst.svg" alt="Amethyst" class="gem-icon" style="animation-delay:0s">
-          <img src="assets/inks/sapphire.svg"  alt="Sapphire"  class="gem-icon" style="animation-delay:.2s">
-          <img src="assets/inks/amber.svg"     alt="Amber"     class="gem-icon" style="animation-delay:.4s">
-          <img src="assets/inks/emerald.svg"   alt="Emerald"   class="gem-icon" style="animation-delay:.6s">
-          <img src="assets/inks/ruby.svg"      alt="Ruby"      class="gem-icon" style="animation-delay:.8s">
-          <img src="assets/inks/steel.svg"     alt="Steel"     class="gem-icon" style="animation-delay:1s">
+          <img src="assets/inks/amethyst.png" alt="Amethyst" class="gem-icon" style="animation-delay:0s">
+          <img src="assets/inks/sapphire.png"  alt="Sapphire"  class="gem-icon" style="animation-delay:.2s">
+          <img src="assets/inks/amber.png"     alt="Amber"     class="gem-icon" style="animation-delay:.4s">
+          <img src="assets/inks/emerald.png"   alt="Emerald"   class="gem-icon" style="animation-delay:.6s">
+          <img src="assets/inks/ruby.png"      alt="Ruby"      class="gem-icon" style="animation-delay:.8s">
+          <img src="assets/inks/steel.png"     alt="Steel"     class="gem-icon" style="animation-delay:1s">
         </div>
         <h1 class="font-display font-black gradient-title text-5xl tracking-widest leading-tight mb-1">
           Inkwell Stats
@@ -111,6 +111,18 @@
       <div class="filter-bar">
         <span class="filter-label">Deck</span>
         <div class="filter-pills" id="filterPills"></div>
+
+        <span id="filterFormatSection" class="filter-bar-group" hidden>
+          <span class="filter-label filter-sep">Format</span>
+          <div class="filter-pills" id="filterFormat"></div>
+        </span>
+
+        <span class="filter-label filter-sep">Période</span>
+        <input type="date" id="dateStart" class="filter-date" title="Date de début">
+        <span class="filter-date-sep">→</span>
+        <input type="date" id="dateEnd" class="filter-date" title="Date de fin">
+        <button id="dateResetBtn" class="filter-pill filter-reset" hidden title="Réinitialiser la période">✕</button>
+
         <span class="filter-count" id="filterCount"></span>
       </div>
 

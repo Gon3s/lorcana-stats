@@ -49,8 +49,8 @@ export function renderTable(games) {
         <td>${g.date.slice(5)}</td>
         <td><span class="win-badge ${isWin ? 'win' : 'loss'}">${isWin ? '✓ Victoire' : '✗ Défaite'}</span></td>
         <td>${g.opponent}</td>
-        <td class="td-small td-inks">${inkBadge(g.myColors)}</td>
-        <td class="td-small td-inks">${inkBadge(g.oppColors)}</td>
+        <td class="td-small">${inkBadge(g.myColors)}</td>
+        <td class="td-small">${inkBadge(g.oppColors)}</td>
         <td class="td-center td-win">${g.myLore}</td>
         <td class="td-center td-loss">${g.oppLore}</td>
         <td class="td-center">${g.turns}</td>
