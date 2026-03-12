@@ -6,10 +6,15 @@ on:
       version:
         type: string
         required: true
-        description: "Version to release"
+        description: "Version to release (ex: 1.2.0)"
   pull_request:
     types:
       - closed
+
+# Permissions nécessaires pour créer des branches, pousser des tags et ouvrir des PRs
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   release_workflow:
@@ -21,6 +26,7 @@ jobs:
           develop_branch: "develop"
           main_branch: "main"
           merge_back_from_main: false
-          version: ${{ inputs.version }}
+          # inputs.version est vide sur le trigger pull_request (géré par l'action)
+          version: ${{ inputs.version || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
