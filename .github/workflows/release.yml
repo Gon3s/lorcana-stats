@@ -7,9 +7,6 @@ on:
         type: string
         required: true
         description: "Version to release (ex: 1.2.0)"
-  pull_request:
-    types:
-      - closed
 
 # Permissions nécessaires pour créer des branches, pousser des tags et ouvrir des PRs
 permissions:
