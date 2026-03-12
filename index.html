@@ -111,6 +111,18 @@
       <div class="filter-bar">
         <span class="filter-label">Deck</span>
         <div class="filter-pills" id="filterPills"></div>
+
+        <span id="filterFormatSection" class="filter-bar-group" hidden>
+          <span class="filter-label filter-sep">Format</span>
+          <div class="filter-pills" id="filterFormat"></div>
+        </span>
+
+        <span class="filter-label filter-sep">Période</span>
+        <input type="date" id="dateStart" class="filter-date" title="Date de début">
+        <span class="filter-date-sep">→</span>
+        <input type="date" id="dateEnd" class="filter-date" title="Date de fin">
+        <button id="dateResetBtn" class="filter-pill filter-reset" hidden title="Réinitialiser la période">✕</button>
+
         <span class="filter-count" id="filterCount"></span>
       </div>
 

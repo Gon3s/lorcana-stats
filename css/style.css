@@ -207,6 +207,19 @@ body::before {
 }
 .filter-count span { color: var(--gold-light); font-weight: 600; }
 
+.filter-bar-group { display: contents; }
+.filter-sep { padding-left: 12px; border-left: 1px solid var(--border); margin-left: 4px; }
+.filter-date {
+  background: var(--raised); border: 1px solid var(--border);
+  color: var(--text); border-radius: 8px; padding: 4px 10px;
+  font-size: 13px; cursor: pointer; flex-shrink: 0;
+}
+.filter-date::-webkit-calendar-picker-indicator { filter: invert(.6); cursor: pointer; }
+.filter-date:focus { outline: none; border-color: var(--gold); }
+.filter-date-sep { color: var(--muted); font-size: 13px; flex-shrink: 0; }
+.filter-reset { padding: 4px 10px; opacity: .7; }
+.filter-reset:hover { opacity: 1; }
+
 /* ── Chart containers ── */
 .chart-wrap { position: relative; width: 100%; }
 
