@@ -92,6 +92,8 @@ export function parseCSV(csvText) {
     };
   }).filter(g => {
     if (!g.result || !g.myColors) return false;
+    // Exclure les parties sans données MMR (mmrBefore et mmrAfter tous deux à 0)
+    if (g.mmrBefore === 0 && g.mmrAfter === 0) return false;
     // B1 : élimination des doublons
     const key = `${g.startedAt}|${g.opponent}|${g.result}`;
     if (seen.has(key)) return false;

@@ -4,24 +4,12 @@
  * Gère la détection de versions distinctes quand la composition change.
  */
 
-import { parseCSV }    from '../parser.js';
-import { inkBadge }    from '../utils/ink.js';
-import { LS_KEYS }     from '../constants.js';
-
-// ── Empreinte de decklist ──────────────────────────────────────────────────
-
-/**
- * Produit une chaîne canonique représentant une decklist.
- * Deux decklists identiques produisent la même empreinte.
- * @returns {string|null} null si la decklist est vide
- */
-function fingerprint(decklist) {
-  if (!decklist || !decklist.length) return null;
-  return [...decklist]
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map(c => `${c.count}x${c.name}`)
-    .join('|');
-}
+import { parseCSV }          from '../parser.js';
+import { inkBadge }          from '../utils/ink.js';
+import { LS_KEYS }           from '../constants.js';
+import { buildDecks }        from '../utils/deck-builder.js';
+import { store }             from '../store.js';
+import { buildQueueFilter, buildDateFilter, updateFilterCount } from '../ui/filter.js';
 
 // ── Diff entre deux decklists ──────────────────────────────────────────────
 
@@ -46,74 +34,11 @@ function diffDecklists(before, after) {
     else if (b !== a) changed.push({ name, before: b, after: a });
   }
 
-  // Tri alphabétique
   added.sort((a, b) => a.name.localeCompare(b.name));
   removed.sort((a, b) => a.name.localeCompare(b.name));
   changed.sort((a, b) => a.name.localeCompare(b.name));
 
   return { added, removed, changed };
-}
-
-// ── Agrégation des decks avec détection de versions ───────────────────────
-
-function buildDecks(games) {
-  // Regrouper par couleur (les games sont déjà triés chronologiquement)
-  const byColor = {};
-  for (const g of games) {
-    (byColor[g.myColors] = byColor[g.myColors] || []).push(g);
-  }
-
-  const allDecks = [];
-
-  for (const [colors, colorGames] of Object.entries(byColor)) {
-    // Détecter les versions en parcourant chronologiquement
-    const versions = [];
-    let current    = null;
-
-    for (const g of colorGames) {
-      const fp = fingerprint(g.decklist);
-
-      if (!current) {
-        // Premier jeu de cette couleur
-        current = { fp, decklist: g.decklist || [], games: [g] };
-      } else if (fp && fp !== current.fp) {
-        // La decklist a changé → nouvelle version
-        versions.push(current);
-        current = { fp, decklist: g.decklist, games: [g] };
-      } else {
-        // Même version (ou partie sans decklist → hérite de la version courante)
-        if (fp) current.decklist = g.decklist; // maintenir la liste à jour
-        current.games.push(g);
-      }
-    }
-    if (current) versions.push(current);
-
-    const multiVersion = versions.length > 1;
-
-    versions.forEach((v, idx) => {
-      const wins     = v.games.filter(g => g.result === 'Win').length;
-      const total    = v.games.length;
-      const avgDelta = v.games.reduce((s, g) => s + (g.mmrAfter - g.mmrBefore), 0) / total;
-      const dates    = v.games.map(g => g.date).sort();
-
-      allDecks.push({
-        colors,
-        version:       multiVersion ? idx + 1 : null,
-        totalVersions: multiVersion ? versions.length : 1,
-        // Diff avec la version précédente (null pour la v1)
-        diff: idx > 0 ? diffDecklists(versions[idx - 1].decklist, v.decklist) : null,
-        total, wins,
-        losses:        total - wins,
-        rate:          wins / total * 100,
-        avgDelta,
-        firstPlayed:   dates[0],
-        lastPlayed:    dates[dates.length - 1],
-        decklist:      v.decklist,
-      });
-    });
-  }
-
-  return allDecks.sort((a, b) => b.total - a.total);
 }
 
 // ── Rendu du diff ──────────────────────────────────────────────────────────
@@ -124,7 +49,6 @@ function renderDiff(diff) {
   if (!added.length && !removed.length && !changed.length) return '';
 
   const parts = [];
-
   if (added.length)   parts.push(added.map(c =>
     `<span class="deck-diff-added">+${c.count}× ${c.name}</span>`).join(''));
   if (removed.length) parts.push(removed.map(c =>
@@ -146,12 +70,13 @@ function renderDeckCard(deck) {
   const mmrColor = deck.avgDelta >= 0 ? 'var(--win)' : 'var(--loss)';
   const mmrSign  = deck.avgDelta >= 0 ? '+' : '';
 
-  // Badge de version (affiché uniquement si plusieurs versions)
   const versionBadge = deck.version
     ? `<span class="deck-version-badge">v${deck.version} / ${deck.totalVersions}</span>`
     : '';
 
-  // Cartes triées : count décroissant, puis nom alphabétique
+  // Diff calculé depuis prevDecklist (extrait par deck-builder)
+  const diff = deck.prevDecklist ? diffDecklists(deck.prevDecklist, deck.decklist) : null;
+
   const cards = [...deck.decklist]
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 
@@ -186,7 +111,7 @@ function renderDeckCard(deck) {
           </div>
         </div>
       </div>
-      ${renderDiff(deck.diff)}
+      ${renderDiff(diff)}
       <div class="deck-profile-body">
         <div class="deck-cards-grid">${cardList}</div>
         ${cards.length
@@ -194,6 +119,35 @@ function renderDeckCard(deck) {
           : ''}
       </div>
     </div>`;
+}
+
+// ── Rendu de la liste ──────────────────────────────────────────────────────
+
+function renderAllDecks() {
+  const content = document.getElementById('decksContent');
+  const games   = store.getFiltered();
+  const decks   = buildDecks(games);
+
+  updateFilterCount(games.length);
+
+  const uniqueColors  = new Set(decks.map(d => d.colors)).size;
+  const totalVersions = decks.length;
+  document.getElementById('deckCount').textContent =
+    uniqueColors === totalVersions
+      ? `${uniqueColors} deck${uniqueColors > 1 ? 's' : ''}`
+      : `${uniqueColors} deck${uniqueColors > 1 ? 's' : ''} · ${totalVersions} versions`;
+
+  content.innerHTML = decks.length
+    ? decks.map(renderDeckCard).join('')
+    : '<p class="empty-msg" style="padding:48px 0;font-size:16px">Aucune partie pour cette période.</p>';
+}
+
+// ── Utilitaire date ────────────────────────────────────────────────────────
+
+function daysAgo(n) {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return d.toISOString().slice(0, 10);
 }
 
 // ── Initialisation ─────────────────────────────────────────────────────────
@@ -217,17 +171,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   try {
     const { games } = parseCSV(csv);
-    const decks     = buildDecks(games);
+    store.setGames(games);
 
-    // Compter les couleurs uniques pour le résumé
-    const uniqueColors = new Set(decks.map(d => d.colors)).size;
-    const totalVersions = decks.length;
-    document.getElementById('deckCount').textContent =
-      uniqueColors === totalVersions
-        ? `${uniqueColors} deck${uniqueColors > 1 ? 's' : ''}`
-        : `${uniqueColors} deck${uniqueColors > 1 ? 's' : ''} · ${totalVersions} versions`;
+    // Filtre date par défaut : 15 derniers jours
+    const dateDefault = daysAgo(15);
+    store.setDateRange(dateDefault, null);
 
-    content.innerHTML = decks.map(renderDeckCard).join('');
+    buildQueueFilter(store.allGames, store.setActiveQueue.bind(store), renderAllDecks);
+    buildDateFilter(store.setDateRange.bind(store), renderAllDecks, dateDefault);
+
+    renderAllDecks();
   } catch (e) {
     content.innerHTML = `<p class="empty-msg">Erreur de lecture : ${e.message}</p>`;
   }

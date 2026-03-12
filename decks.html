@@ -39,6 +39,25 @@
       </div>
     </header>
 
+    <!-- FILTRES -->
+    <div class="filter-bar mb-8">
+      <!-- Filtre par file de jeu (masqué si ≤ 1 file) -->
+      <span id="filterQueueSection" class="filter-bar-group" hidden>
+        <span class="filter-label">File</span>
+        <div class="filter-pills" id="filterQueue"></div>
+      </span>
+
+      <span class="filter-label filter-sep">Période</span>
+      <label for="dateStart" class="sr-only">Date de début</label>
+      <input type="date" id="dateStart" class="filter-date" title="Date de début">
+      <span class="filter-date-sep">→</span>
+      <label for="dateEnd" class="sr-only">Date de fin</label>
+      <input type="date" id="dateEnd" class="filter-date" title="Date de fin">
+      <button id="dateResetBtn" class="filter-pill filter-reset" hidden title="Réinitialiser la période">✕</button>
+
+      <span class="filter-count" id="filterCount"></span>
+    </div>
+
     <!-- CONTENU (rendu par decks.js) -->
     <main id="decksContent"></main>
 
