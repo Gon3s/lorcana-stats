@@ -8,11 +8,6 @@ on:
         required: true
         description: "Version to release (ex: 1.2.0)"
 
-# Permissions nécessaires pour créer des branches, pousser des tags et ouvrir des PRs
-permissions:
-  contents: write
-  pull-requests: write
-
 jobs:
   release_workflow:
     runs-on: ubuntu-latest
