@@ -329,8 +329,6 @@ body::before {
   font-size: 11px; color: var(--muted); font-style: italic;
 }
 
-/* Cellules encres dans le tableau */
-.td-inks { display: flex; align-items: center; gap: 4px; }
 
 /* Gems anciens (keep pour compatibilité loader) */
 .gem {
