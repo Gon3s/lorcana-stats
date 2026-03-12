@@ -75,14 +75,21 @@ export function renderDailyChart(games) {
       labels: dates.map(d => d.slice(5)),
       datasets: [
         {
-          label: 'Victoires',
+          label: 'Victoires ●',
           data:  dates.map(d => byDate[d].filter(g => g.result === 'Win').length),
-          backgroundColor: 'rgba(78,204,163,.75)', borderRadius: 4, stack: 's',
+          backgroundColor: 'rgba(78,204,163,.75)',
+          // U2 : bordure pleine pour distinguer sans la couleur
+          borderColor: 'rgba(78,204,163,1)', borderWidth: 1,
+          borderRadius: 4, stack: 's',
         },
         {
-          label: 'Défaites',
+          label: 'Défaites ▲',
           data:  dates.map(d => byDate[d].filter(g => g.result === 'Loss').length),
-          backgroundColor: 'rgba(232,93,122,.75)', borderRadius: 4, stack: 's',
+          backgroundColor: 'rgba(232,93,122,.75)',
+          // U2 : bordure en tirets pour distinguer sans la couleur
+          borderColor: 'rgba(232,93,122,1)', borderWidth: 2,
+          borderDash: [4, 2],
+          borderRadius: 4, stack: 's',
         },
       ],
     },

@@ -26,10 +26,15 @@ function parseDecklist(str) {
     .filter(Boolean);
 }
 
+/** Borne une valeur numérique dans un intervalle [min, max] */
+function clamp(v, min, max) {
+  return Math.max(min, Math.min(max, v));
+}
+
 /**
- * Parse le CSV brut en tableau de Game objects.
+ * Parse le CSV brut en tableau de Game objects + avertissements.
  * @param {string} csvText
- * @returns {Game[]}
+ * @returns {{ games: Game[], warnings: string[] }}
  * @throws {Error} si le format est invalide
  */
 export function parseCSV(csvText) {
@@ -46,34 +51,64 @@ export function parseCSV(csvText) {
   const missing  = required.filter(c => !cols.includes(c));
   if (missing.length) throw new Error(`Colonnes manquantes : ${missing.join(', ')}. Export duels.ink attendu.`);
 
+  const warnings = [];
+  let decklisFailCount = 0;
+
+  // B1 : déduplication — clé composite startedAt + opponent + result
+  const seen = new Set();
+
   const games = parsed.data.map(row => {
     const startedAt = (row['Started At'] || '').trim();
     const dt        = startedAt ? new Date(startedAt) : null;
 
+    // B4 : détection des decklists non parsées
+    const rawDecklist = (row['Decklist'] || '').trim();
+    const decklist    = parseDecklist(rawDecklist);
+    if (rawDecklist && !decklist.length) decklisFailCount++;
+
     return {
-      date:      (row['Date']           || '').trim(),
+      date:        (row['Date']           || '').trim(),
       startedAt,
       dt,
-      dayOfWeek: dt ? ((dt.getUTCDay() + 6) % 7) : null, // 0=Lun … 6=Dim
-      hour:      dt ? dt.getUTCHours()              : null,
-      result:    (row['Result']         || '').trim(),
-      opponent:  (row['Opponent']       || '').trim(),
-      myLore:    parseInt(row['My Lore'])       || 0,
-      oppLore:   parseInt(row['Opponent Lore']) || 0,
-      turns:     parseInt(row['Turns'])         || 0,
-      duration:  parseDuration(row['Duration']  || ''),
-      turnOrder: (row['Turn Order']     || '').trim(),
-      myColors:  (row['My Colors']      || '').trim(),
-      oppColors: (row['Opponent Colors']|| '').trim(),
-      mmrBefore:   parseInt(row['MMR Before'])    || 0,
-      mmrAfter:    parseInt(row['MMR After'])     || 0,
-      matchFormat: (row['Match Format'] || '').trim(),
-      decklist:    parseDecklist(row['Decklist'] || ''),
+      // B3 : heure et jour en temps local (plus getUTCHours/getUTCDay)
+      dayOfWeek:   dt ? ((dt.getDay() + 6) % 7) : null, // 0=Lun … 6=Dim
+      hour:        dt ? dt.getHours()             : null,
+      result:      (row['Result']         || '').trim(),
+      opponent:    (row['Opponent']       || '').trim(),
+      // Q2 : validation des valeurs numériques
+      myLore:      clamp(parseInt(row['My Lore'])       || 0, 0, 20),
+      oppLore:     clamp(parseInt(row['Opponent Lore']) || 0, 0, 20),
+      turns:       Math.max(0, parseInt(row['Turns'])   || 0),
+      duration:    Math.max(0, parseDuration(row['Duration'] || '')),
+      turnOrder:   (row['Turn Order']     || '').trim(),
+      myColors:    (row['My Colors']      || '').trim(),
+      oppColors:   (row['Opponent Colors']|| '').trim(),
+      mmrBefore:   clamp(parseInt(row['MMR Before']) || 0, 0, 9999),
+      mmrAfter:    clamp(parseInt(row['MMR After'])  || 0, 0, 9999),
+      matchFormat: (row['Match Format']   || '').trim(),
+      // F5 : extraction de la file de jeu
+      queue:       (row['Queue']          || '').trim(),
+      decklist,
     };
-  }).filter(g => g.result && g.myColors);
+  }).filter(g => {
+    if (!g.result || !g.myColors) return false;
+    // B1 : élimination des doublons
+    const key = `${g.startedAt}|${g.opponent}|${g.result}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 
   games.sort((a, b) => (a.dt && b.dt ? a.dt - b.dt : 0));
 
   if (!games.length) throw new Error('Aucune partie valide trouvée dans le fichier.');
-  return games;
+
+  // B4 : avertissement decklist
+  if (decklisFailCount > 0) {
+    warnings.push(
+      `${decklisFailCount} decklist(s) n'ont pas pu être parsées (format inattendu).`
+    );
+  }
+
+  return { games, warnings };
 }

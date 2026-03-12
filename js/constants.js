@@ -33,3 +33,17 @@ export const CHART_TOOLTIP = {
   borderColor:     'rgba(201,168,76,.4)',
   borderWidth:     1,
 };
+
+// ── Paramètres métier (Q1 : magic numbers centralisés) ────────────────────
+
+/** Fenêtre glissante pour le winrate rolling (momentum) */
+export const MOMENTUM_WINDOW = 5;
+
+/** Longueur minimale d'une série pour être affichée */
+export const MIN_STREAK = 3;
+
+/** Nombre minimum de parties pour afficher un matchup dans la matrice */
+export const MIN_MATCHUP_GAMES = 3;
+
+/** Nombre maximum de lignes affichées dans le tableau des parties */
+export const TABLE_MAX_ROWS = 20;

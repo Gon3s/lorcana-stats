@@ -24,7 +24,10 @@ export function renderMMRChart(games) {
         fill: true,
         pointBackgroundColor: games.map(g => g.result === 'Win' ? 'rgba(78,204,163,.85)' : 'rgba(232,93,122,.85)'),
         pointBorderColor:     games.map(g => g.result === 'Win' ? 'rgba(78,204,163,.85)' : 'rgba(232,93,122,.85)'),
-        pointRadius: 4, pointHoverRadius: 7, tension: .35,
+        // U2 : forme différente par résultat (cercle = victoire, triangle = défaite)
+        pointStyle:  games.map(g => g.result === 'Win' ? 'circle' : 'triangle'),
+        pointRadius: games.map(g => g.result === 'Win' ? 4 : 5),
+        pointHoverRadius: 7, tension: .35,
       }],
     },
     options: {
