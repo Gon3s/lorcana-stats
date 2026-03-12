@@ -50,7 +50,14 @@ function handleFile(file, onCSV) {
   const reader   = new FileReader();
   reader.onload  = e => {
     const csv = e.target.result;
-    try { localStorage.setItem(LS_KEYS.CSV, csv); } catch { /* quota exceeded */ }
+    try {
+      localStorage.setItem(LS_KEYS.CSV, csv);
+    } catch {
+      /* Quota localStorage dépassé : les données ne seront pas persistées */
+      showUploadError(
+        'Espace de stockage local insuffisant : les données ne seront pas sauvegardées pour la prochaine visite.'
+      );
+    }
     setTimeout(() => onCSV(csv), 50);
   };
   reader.onerror = () => {
