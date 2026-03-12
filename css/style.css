@@ -717,6 +717,38 @@ body::before {
   font-size: 11px; color: var(--muted); font-style: italic;
 }
 
+/* Badge de version */
+.deck-version-badge {
+  display: inline-block;
+  background: rgba(155,89,182,.2); border: 1px solid rgba(155,89,182,.4);
+  color: var(--amethyst); border-radius: 10px;
+  font-size: 10px; letter-spacing: .08em; font-weight: 600;
+  padding: 1px 8px; margin-left: 8px; vertical-align: middle;
+  text-transform: uppercase;
+}
+
+/* Diff entre versions */
+.deck-diff {
+  padding: 12px 26px;
+  background: rgba(42,47,85,.3);
+  border-bottom: 1px solid var(--border);
+}
+.deck-diff-label {
+  font-family: 'Cinzel', serif; font-size: 10px;
+  letter-spacing: .15em; text-transform: uppercase;
+  color: var(--muted); display: block; margin-bottom: 8px;
+}
+.deck-diff-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.deck-diff-added, .deck-diff-removed, .deck-diff-changed {
+  font-size: 12px; border-radius: 6px; padding: 2px 8px;
+}
+.deck-diff-added   { background: rgba(78,204,163,.12); color: var(--win);  border: 1px solid rgba(78,204,163,.3); }
+.deck-diff-removed { background: rgba(232,93,122,.12); color: var(--loss); border: 1px solid rgba(232,93,122,.3); }
+.deck-diff-changed {
+  background: rgba(201,168,76,.1); color: var(--gold-light);
+  border: 1px solid rgba(201,168,76,.3);
+}
+
 /* Grille de cartes */
 .deck-profile-body {
   padding: 20px 26px;
