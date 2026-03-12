@@ -4,7 +4,8 @@
  * Ne contient aucune logique graphique (Chart.js).
  */
 
-import { inkBadge } from '../utils/ink.js';
+import { inkBadge }      from '../utils/ink.js';
+import { TABLE_MAX_ROWS } from '../constants.js';
 
 // ── Header & KPIs ─────────────────────────────────────────────────────────
 
@@ -41,7 +42,7 @@ function mmrDeltaClass(delta) {
 
 export function renderTable(games) {
   document.getElementById('tableBody').innerHTML =
-    [...games].reverse().slice(0, 20).map(g => {
+    [...games].reverse().slice(0, TABLE_MAX_ROWS).map(g => {
       const delta  = g.mmrAfter - g.mmrBefore;
       const isWin  = g.result === 'Win';
 
@@ -52,7 +53,7 @@ export function renderTable(games) {
         <td class="td-small">${inkBadge(g.myColors)}</td>
         <td class="td-small">${inkBadge(g.oppColors)}</td>
         <td class="td-center td-win">${g.myLore}</td>
-        <td class="td-center td-loss">${g.oppLore}</td>
+        <td class="td-center">${g.oppLore}</td>
         <td class="td-center">${g.turns}</td>
         <td class="td-center">${g.duration}m</td>
         <td class="td-right ${mmrDeltaClass(delta)} td-cinzel">${delta >= 0 ? '+' : ''}${delta}</td>
@@ -64,7 +65,7 @@ export function renderTable(games) {
 
 export function renderStreak(games) {
   document.getElementById('streakRow').innerHTML =
-    games.slice(-20).map(g => {
+    games.slice(-TABLE_MAX_ROWS).map(g => {
       const w = g.result === 'Win';
       return `<div class="streak-dot ${w ? 'w' : 'l'}" title="${g.date} vs ${g.opponent}">${w ? 'V' : 'D'}</div>`;
     }).join('');

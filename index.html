@@ -117,9 +117,18 @@
           <div class="filter-pills" id="filterFormat"></div>
         </span>
 
+        <!-- F5 : filtre par file de jeu -->
+        <span id="filterQueueSection" class="filter-bar-group" hidden>
+          <span class="filter-label filter-sep">File</span>
+          <div class="filter-pills" id="filterQueue"></div>
+        </span>
+
         <span class="filter-label filter-sep">Période</span>
+        <!-- U3 : labels accessibles sur les inputs de date -->
+        <label for="dateStart" class="sr-only">Date de début</label>
         <input type="date" id="dateStart" class="filter-date" title="Date de début">
         <span class="filter-date-sep">→</span>
+        <label for="dateEnd" class="sr-only">Date de fin</label>
         <input type="date" id="dateEnd" class="filter-date" title="Date de fin">
         <button id="dateResetBtn" class="filter-pill filter-reset" hidden title="Réinitialiser la période">✕</button>
 
@@ -155,7 +164,7 @@
       </div>
 
       <!-- ─── MMR EVOLUTION ─── -->
-      <div class="section-label">Progression MMR</div>
+      <h2 class="section-label">Progression MMR</h2>
       <div class="card mb-6">
         <div class="card-title">Évolution du MMR</div>
         <div class="card-subtitle">Chaque point = une partie · vert = victoire · rouge = défaite</div>
@@ -185,7 +194,7 @@
       </div>
 
       <!-- ─── DECK WINRATES ─── -->
-      <div class="section-label">Analyse par Deck</div>
+      <h2 class="section-label">Analyse par Deck</h2>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div class="card">
           <div class="card-title">Winrate — mon deck</div>
@@ -199,8 +208,15 @@
         </div>
       </div>
 
+      <!-- ─── DELTA MMR PAR DECK (N7) ─── -->
+      <div class="card mb-6">
+        <div class="card-title">Delta MMR moyen par deck</div>
+        <div class="card-subtitle">Gain / perte MMR moyen par partie jouée (≥ 3 parties)</div>
+        <div id="mmrDeltaBars"></div>
+      </div>
+
       <!-- ─── STATS DE JEU ─── -->
-      <div class="section-label">Statistiques de Jeu</div>
+      <h2 class="section-label">Statistiques de Jeu</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div class="card">
           <div class="card-title">Ordre de jeu</div>
@@ -216,7 +232,7 @@
       </div>
 
       <!-- ─── RÉCENCE ─── -->
-      <div class="section-label">Récence &amp; Performance</div>
+      <h2 class="section-label">Récence &amp; Performance</h2>
       <div class="card mb-6">
         <div class="card-title">Dernières 20 parties</div>
         <div class="card-subtitle">V = Victoire · D = Défaite · ordre chronologique</div>
@@ -224,7 +240,7 @@
       </div>
 
       <!-- ─── MOMENTUM ─── -->
-      <div class="section-label">Analyse Temporelle</div>
+      <h2 class="section-label">Analyse Temporelle</h2>
       <div class="card mb-6">
         <div class="card-title">Momentum — winrate glissant</div>
         <div class="card-subtitle">Fenêtre de 5 parties · seuil 50% en pointillé</div>
@@ -233,7 +249,7 @@
       </div>
 
       <!-- ─── STATS PAR ENCRE ─── -->
-      <div class="section-label">Statistiques par Encre</div>
+      <h2 class="section-label">Statistiques par Encre</h2>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div class="card">
           <div class="card-title">Winrate par encre jouée</div>
@@ -248,7 +264,7 @@
       </div>
 
       <!-- ─── MATCHUP PREDICTOR ─── -->
-      <div class="section-label">Prédiction &amp; Matchups</div>
+      <h2 class="section-label">Prédiction &amp; Matchups</h2>
       <div class="card mb-6">
         <div class="card-title">Prédicteur de matchup</div>
         <div class="card-subtitle">
@@ -258,7 +274,7 @@
       </div>
 
       <!-- ─── SUIVI DE PROGRESSION ─── -->
-      <div class="section-label">Suivi de Progression</div>
+      <h2 class="section-label">Suivi de Progression</h2>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div class="card">
           <div class="card-title">Cette semaine vs semaine précédente</div>
@@ -273,7 +289,7 @@
       </div>
 
       <!-- ─── JOURNAL DES PARTIES ─── -->
-      <div class="section-label">Journal des Parties</div>
+      <h2 class="section-label">Journal des Parties</h2>
       <div class="card mb-6">
         <div class="card-title">20 dernières parties</div>
         <div class="card-subtitle">Résultats détaillés · du plus récent au plus ancien</div>

@@ -4,11 +4,13 @@
  * - Matrice de matchups encre vs encre adversaire
  */
 
-import { winStats } from '../charts/registry.js';
-import { inkBadge, INK_COLOR } from '../utils/ink.js';
+import { winStats }                from '../charts/registry.js';
+import { inkBadge, INK_COLOR }     from '../utils/ink.js';
+import { MIN_MATCHUP_GAMES }       from '../constants.js';
 
 const ALL_INKS = ['Amber', 'Amethyst', 'Emerald', 'Ruby', 'Sapphire', 'Steel'];
-const MIN_GAMES = 3;
+
+// Q1 : MIN_GAMES renommé en MIN_MATCHUP_GAMES (importé depuis constants.js)
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -38,10 +40,10 @@ export function renderInkWinrates(games, containerId) {
   const stats = inks.map(ink => {
     const gs = games.filter(g => splitInks(g.myColors).includes(ink));
     return { ink, ...winStats(gs) };
-  }).filter(s => s.total >= MIN_GAMES).sort((a, b) => b.rate - a.rate);
+  }).filter(s => s.total >= MIN_MATCHUP_GAMES).sort((a, b) => b.rate - a.rate);
 
   container.innerHTML = stats.map(s => {
-    const color = INK_COLOR[s.ink.toLowerCase()] || '#888';
+    const color    = INK_COLOR[s.ink.toLowerCase()] || '#888';
     const barColor = s.rate >= 50 ? '#4ecca3' : '#e85d7a';
     return `
       <div class="ink-stat-row">
@@ -60,7 +62,32 @@ export function renderInkWinrates(games, containerId) {
   }).join('');
 }
 
-// ── Section 2 : matrice de matchups ────────────────────────────────────────
+// ── Section 2 : matrice de matchups (P2 : précalcul avec cache) ────────────
+
+/** Cache pour éviter de recalculer la matrice si les données n'ont pas changé */
+let _matrixGamesRef  = null;
+let _matrixDataCache = null;
+
+/**
+ * Précalcule toutes les cellules de la matrice ink vs ink.
+ * @returns {Object} map : "myInk|oppInk" → { rate, total }
+ */
+function buildMatrixData(inks, games) {
+  const cache = {};
+  for (const myInk of inks) {
+    for (const oppInk of inks) {
+      if (myInk === oppInk) continue;
+      const gs = games.filter(g =>
+        splitInks(g.myColors).includes(myInk) &&
+        splitInks(g.oppColors).includes(oppInk)
+      );
+      if (!gs.length) continue;
+      const s = winStats(gs);
+      cache[`${myInk}|${oppInk}`] = { rate: s.rate, total: gs.length };
+    }
+  }
+  return cache;
+}
 
 export function renderMatchupMatrix(games, containerId) {
   const container = document.getElementById(containerId);
@@ -68,15 +95,10 @@ export function renderMatchupMatrix(games, containerId) {
 
   const inks = detectInks(games);
 
-  // Calcule winrate de myInk vs oppInk
-  function matchup(myInk, oppInk) {
-    const gs = games.filter(g =>
-      splitInks(g.myColors).includes(myInk) &&
-      splitInks(g.oppColors).includes(oppInk)
-    );
-    if (!gs.length) return null;
-    const s = winStats(gs);
-    return { rate: s.rate, total: gs.total || gs.length };
+  // P2 : recalcul uniquement si la référence des données a changé
+  if (games !== _matrixGamesRef) {
+    _matrixGamesRef  = games;
+    _matrixDataCache = buildMatrixData(inks, games);
   }
 
   const colHeader = inks.map(ink =>
@@ -86,9 +108,9 @@ export function renderMatchupMatrix(games, containerId) {
   const rows = inks.map(myInk => {
     const cells = inks.map(oppInk => {
       if (myInk === oppInk) return `<td class="matrix-cell matrix-mirror">—</td>`;
-      const m = matchup(myInk, oppInk);
-      if (!m || m.total < MIN_GAMES) return `<td class="matrix-cell matrix-na" title="Pas assez de données">?</td>`;
-      const rate = m.rate;
+      const m = _matrixDataCache[`${myInk}|${oppInk}`];
+      if (!m || m.total < MIN_MATCHUP_GAMES) return `<td class="matrix-cell matrix-na" title="Pas assez de données">?</td>`;
+      const rate      = m.rate;
       const intensity = Math.round(Math.abs(rate - 50) / 50 * 100);
       let bg;
       if (rate >= 60) bg = `rgba(78,204,163,${0.2 + intensity / 250})`;
@@ -119,5 +141,5 @@ export function renderMatchupMatrix(games, containerId) {
         <tbody>${rows}</tbody>
       </table>
     </div>
-    <p class="matrix-note">Winrate de ton encre (ligne) contre l'encre adversaire (colonne). Affiché si ≥ ${MIN_GAMES} parties.</p>`;
+    <p class="matrix-note">Winrate de ton encre (ligne) contre l'encre adversaire (colonne). Affiché si ≥ ${MIN_MATCHUP_GAMES} parties.</p>`;
 }

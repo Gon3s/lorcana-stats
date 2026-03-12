@@ -4,9 +4,10 @@
  */
 
 import { destroyChart, registerChart, GRID } from '../charts/registry.js';
+import { MOMENTUM_WINDOW, MIN_STREAK }        from '../constants.js';
 
-const WINDOW_SIZE = 5;
-const MIN_STREAK  = 3;
+// Q1 : constantes centralisées dans constants.js
+const WINDOW_SIZE = MOMENTUM_WINDOW;
 
 // ── Calculs purs ───────────────────────────────────────────────────────────
 

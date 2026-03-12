@@ -29,6 +29,23 @@
   --radius:     14px;
 }
 
+/* ── Accessibilité : masquage visuel pour lecteurs d'écran (U3) ── */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
+}
+
+/* ── Accessibilité : focus clavier visible (U6) ── */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* Exceptions pour les éléments avec leur propre style de focus */
+.filter-date:focus-visible { outline: none; border-color: var(--gold); }
+.goal-input:focus-visible   { outline: none; border-color: var(--gold); }
+
 /* ── Reset ── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
