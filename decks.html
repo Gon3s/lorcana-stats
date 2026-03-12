@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mes Decks — Inkwell Stats</title>
+
+  <!-- Polices -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/tailwind.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- PapaParse (utilisé par parser.js) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+</head>
+<body class="bg-ink font-body text-ltext">
+
+  <div class="relative z-10 max-w-screen-xl mx-auto px-8 py-12 max-sm:px-4 max-sm:py-6">
+
+    <!-- EN-TÊTE -->
+    <header class="mb-10">
+      <div class="flex items-center justify-between flex-wrap gap-4 mb-4">
+        <a href="index.html" class="decks-back-btn">← Dashboard</a>
+        <p class="font-display text-[11px] tracking-[.3em] text-gold uppercase opacity-80">
+          Lorcana · duels.ink
+        </p>
+      </div>
+
+      <div class="text-center">
+        <h1 class="font-display font-black gradient-title leading-tight mb-2"
+            style="font-size:clamp(24px,4vw,48px);letter-spacing:.04em">
+          Mes Decks
+        </h1>
+        <p class="text-muted italic text-sm" id="deckCount">Chargement…</p>
+        <div class="header-divider"><div class="header-divider-gem"></div></div>
+      </div>
+    </header>
+
+    <!-- CONTENU (rendu par decks.js) -->
+    <main id="decksContent"></main>
+
+    <footer class="text-center mt-14 pt-6 border-t border-lborder text-muted text-sm italic">
+      Inkwell Stats · données
+      <a href="https://duels.ink" target="_blank" rel="noopener" class="text-gold no-underline hover:underline">
+        duels.ink
+      </a>
+      · <a href="index.html" class="footer-link">Retour au dashboard</a>
+    </footer>
+
+  </div>
+
+  <script type="module" src="js/pages/decks.js"></script>
+</body>
+</html>

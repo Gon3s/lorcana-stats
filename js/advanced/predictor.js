@@ -3,6 +3,8 @@
  * Agrégation des stats par deck adverse et rendu HTML.
  */
 
+import { inkBadge } from '../utils/ink.js';
+
 /** @returns {{ label: string, color: string }} */
 function verdict(rate) {
   if (rate >= 60) return { label: 'Favorable',   color: 'var(--win)'       };
@@ -39,6 +41,7 @@ function renderMatchupCard(m) {
 
   return `
     <div class="predictor-card">
+      <div class="predictor-opp-icons">${inkBadge(m.opp, 26)}</div>
       <div class="predictor-opp">${m.opp}</div>
       <div class="predictor-rate"   style="color:${color}">${m.rate.toFixed(0)}%</div>
       <div class="predictor-verdict" style="color:${color}">${label}</div>
@@ -56,10 +59,11 @@ export function renderMatchupPredictor(games, activeDeck) {
     return;
   }
 
+  const deckIcons = activeDeck !== 'all' ? inkBadge(activeDeck, 20) + ' ' : '';
   const deckLabel = activeDeck === 'all' ? 'tous decks' : activeDeck;
   container.innerHTML = `
     <div class="predictor-deck-label">
-      Deck analysé : <strong>${deckLabel}</strong>
+      Deck analysé : <strong>${deckIcons}${deckLabel}</strong>
     </div>
     <div class="predictor-grid">
       ${matchups.map(renderMatchupCard).join('')}

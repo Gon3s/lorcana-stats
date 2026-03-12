@@ -4,13 +4,11 @@
  * - Matrice de matchups encre vs encre adversaire
  */
 
-import { winStats }                from '../charts/registry.js';
-import { inkBadge, INK_COLOR }     from '../utils/ink.js';
+import { winStats, groupBy }       from '../charts/registry.js';
+import { inkBadge }                from '../utils/ink.js';
 import { MIN_MATCHUP_GAMES }       from '../constants.js';
 
 const ALL_INKS = ['Amber', 'Amethyst', 'Emerald', 'Ruby', 'Sapphire', 'Steel'];
-
-// Q1 : MIN_GAMES renommé en MIN_MATCHUP_GAMES (importé depuis constants.js)
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -19,7 +17,7 @@ function splitInks(colorStr) {
   return colorStr ? colorStr.split('/').map(c => c.trim()) : [];
 }
 
-/** Identifie les encres présentes dans le dataset */
+/** Identifie les encres individuelles présentes dans le dataset (pour la matrice) */
 function detectInks(games) {
   const set = new Set();
   for (const g of games) {
@@ -29,28 +27,28 @@ function detectInks(games) {
   return ALL_INKS.filter(i => set.has(i));
 }
 
-// ── Section 1 : winrate par encre jouée ────────────────────────────────────
+// ── Section 1 : winrate par combinaison de couleurs jouée ──────────────────
 
 export function renderInkWinrates(games, containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
-  const inks = detectInks(games);
+  // Grouper par bicolorité (ex : "Amethyst/Sapphire") au lieu de l'encre seule
+  const byCombo = groupBy(games, 'myColors');
 
-  const stats = inks.map(ink => {
-    const gs = games.filter(g => splitInks(g.myColors).includes(ink));
-    return { ink, ...winStats(gs) };
-  }).filter(s => s.total >= MIN_MATCHUP_GAMES).sort((a, b) => b.rate - a.rate);
+  const stats = Object.entries(byCombo)
+    .map(([combo, gs]) => ({ combo, ...winStats(gs) }))
+    .filter(s => s.total >= MIN_MATCHUP_GAMES)
+    .sort((a, b) => b.rate - a.rate);
 
   container.innerHTML = stats.map(s => {
-    const color    = INK_COLOR[s.ink.toLowerCase()] || '#888';
     const barColor = s.rate >= 50 ? '#4ecca3' : '#e85d7a';
     return `
       <div class="ink-stat-row">
-        <div class="ink-stat-icon">${inkBadge(s.ink, 36)}</div>
+        <div class="ink-stat-icon">${inkBadge(s.combo, 32)}</div>
         <div class="ink-stat-body">
           <div class="ink-stat-header">
-            <span class="ink-stat-name" style="color:${color}">${s.ink}</span>
+            <span class="ink-stat-name">${s.combo}</span>
             <span class="ink-stat-pct" style="color:${barColor}">${s.rate.toFixed(1)}%</span>
             <span class="ink-stat-games">${s.wins}V / ${s.total - s.wins}D (${s.total})</span>
           </div>
