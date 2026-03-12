@@ -7,6 +7,9 @@ on:
         type: string
         required: true
         description: "Version to release (ex: 1.2.0)"
+  pull_request:
+    types:
+      - closed
 
 jobs:
   release_workflow:
