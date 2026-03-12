@@ -71,6 +71,14 @@ function onRerender() {
   renderFiltered(games);
 }
 
+// ── Callback de re-rendu (déclenché par tout changement de filtre) ──────────
+
+function onRerender() {
+  const games = store.getFiltered();
+  updateFilterCount(games.length);
+  renderAll(games);
+}
+
 // ── Callbacks ──────────────────────────────────────────────────────────────
 
 function onCSV(csvText) {
