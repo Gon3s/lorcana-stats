@@ -188,6 +188,7 @@ body::before {
 }
 .filter-pills { display: flex; flex-wrap: wrap; gap: 8px; flex: 1; }
 .filter-pill {
+  display: inline-flex; align-items: center; gap: 5px;
   padding: 5px 16px; border-radius: 20px;
   font-size: 13px; font-family: 'Cinzel', serif; letter-spacing: .03em;
   cursor: pointer; border: 1px solid var(--border);
@@ -205,6 +206,20 @@ body::before {
   margin-left: auto; white-space: nowrap; flex-shrink: 0;
 }
 .filter-count span { color: var(--gold-light); font-weight: 600; }
+
+.filter-bar-group { display: contents; }
+.filter-bar-group[hidden] { display: none; }
+.filter-sep { padding-left: 12px; border-left: 1px solid var(--border); margin-left: 4px; }
+.filter-date {
+  background: var(--raised); border: 1px solid var(--border);
+  color: var(--text); border-radius: 8px; padding: 4px 10px;
+  font-size: 13px; cursor: pointer; flex-shrink: 0;
+}
+.filter-date::-webkit-calendar-picker-indicator { filter: invert(.6); cursor: pointer; }
+.filter-date:focus { outline: none; border-color: var(--gold); }
+.filter-date-sep { color: var(--muted); font-size: 13px; flex-shrink: 0; }
+.filter-reset { padding: 4px 10px; opacity: .7; }
+.filter-reset:hover { opacity: 1; }
 
 /* ── Chart containers ── */
 .chart-wrap { position: relative; width: 100%; }
@@ -232,7 +247,7 @@ body::before {
 
 /* ── Barres deck winrate ── */
 .bar-row  { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-.bar-label{ width: 145px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+.bar-label{ width: 50px; display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
 .bar-track{ flex: 1; height: 8px; background: var(--raised); border-radius: 4px; overflow: hidden; }
 .bar-fill { height: 100%; border-radius: 4px; transition: width .9s cubic-bezier(.4,0,.2,1); }
 .bar-stat { width: 68px; text-align: right; font-size: 13px; color: var(--muted); flex-shrink: 0; }
@@ -312,7 +327,24 @@ body::before {
   animation: fadeUp .5s ease both;
 }
 
-/* Gems animés */
+/* Gems animés (images SVG) */
+.gem-icon {
+  width: 28px; height: 28px;
+  animation: pulse-gem 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px rgba(201,168,76,.3));
+}
+
+/* Icônes d'encres inline (tableau, barres, pills) */
+.ink-icon {
+  display: inline-block; vertical-align: middle;
+  filter: drop-shadow(0 0 3px rgba(255,255,255,.15));
+}
+.ink-unknown {
+  font-size: 11px; color: var(--muted); font-style: italic;
+}
+
+
+/* Gems anciens (keep pour compatibilité loader) */
 .gem {
   width: 14px; height: 14px;
   transform: rotate(45deg);
@@ -570,3 +602,47 @@ body::before {
 @media (max-width: 640px) {
   .filter-bar { padding: 14px 16px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   STATS PAR ENCRE — WINRATES
+   ═══════════════════════════════════════════════════════════════ */
+
+.ink-stat-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.ink-stat-row:last-child { border-bottom: none; }
+.ink-stat-icon { flex-shrink: 0; display: flex; align-items: center; }
+.ink-stat-body { flex: 1; min-width: 0; }
+.ink-stat-header {
+  display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px;
+}
+.ink-stat-name  { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 600; }
+.ink-stat-pct   { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; margin-left: auto; }
+.ink-stat-games { font-size: 11px; color: var(--muted); }
+.ink-bar-track  { height: 6px; background: var(--raised); border-radius: 3px; overflow: hidden; }
+.ink-bar-fill   { height: 100%; border-radius: 3px; transition: width .8s ease; }
+
+/* ═══════════════════════════════════════════════════════════════
+   MATRICE DE MATCHUPS
+   ═══════════════════════════════════════════════════════════════ */
+
+.matrix-scroll  { overflow-x: auto; }
+.matchup-table  { width: 100%; border-collapse: collapse; font-size: 12px; }
+.matchup-table th,
+.matchup-table td { padding: 6px 4px; text-align: center; border: 1px solid var(--border); }
+.matrix-head    { vertical-align: bottom; }
+.matrix-row-head{ text-align: center; white-space: nowrap; }
+.matrix-corner  {
+  text-align: left; padding: 4px 6px; font-size: 10px;
+  color: var(--muted); line-height: 1.3; background: var(--raised);
+}
+.matrix-corner-my, .matrix-corner-opp { display: block; }
+.matrix-corner-opp { color: var(--gold); }
+.matrix-cell    {
+  font-family: 'Cinzel', serif; font-size: 12px; font-weight: 600;
+  min-width: 42px; border-radius: 0;
+}
+.matrix-mirror  { color: var(--border); background: var(--raised); }
+.matrix-na      { color: var(--border); font-size: 14px; }
+.matrix-note    { font-size: 11px; color: var(--muted); margin-top: 8px; font-style: italic; }

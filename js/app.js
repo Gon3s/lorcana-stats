@@ -8,24 +8,22 @@ import { store }            from './store.js';
 import { parseCSV }         from './parser.js';
 
 // UI
-import { showDashboard, showUploadScreen }                     from './ui/screens.js';
-import { initUploadScreen, checkSavedData, showUploadError }   from './ui/upload.js';
-import { buildFilterBar }                                       from './ui/filter.js';
-import { updateHeader, renderTable, renderStreak }             from './ui/dashboard.js';
+import { showDashboard, showUploadScreen }                           from './ui/screens.js';
+import { initUploadScreen, checkSavedData, showUploadError }         from './ui/upload.js';
+import { buildFilterBar, buildFormatFilter, buildDateFilter,
+         updateFilterCount }                                         from './ui/filter.js';
+import { updateHeader, renderTable, renderStreak }                   from './ui/dashboard.js';
 
 // Graphiques de base
-import { renderMMRChart, renderMMRByDeck }                     from './charts/mmr.js';
-import { renderWinLossDonut, renderDailyChart, renderDeckBars } from './charts/distribution.js';
-import { renderTurnOrder, renderDurationChart, renderLoreChart,
-         renderScatter, renderTurnsChart }                      from './charts/gameplay.js';
+import { renderMMRChart }                                            from './charts/mmr.js';
+import { renderWinLossDonut, renderDailyChart, renderDeckBars }      from './charts/distribution.js';
+import { renderTurnOrder, renderDurationChart }                      from './charts/gameplay.js';
 
 // Analyses avancées
-import { renderCardAnalysis }                                   from './advanced/cards.js';
-import { renderHeatmap }                                        from './advanced/heatmap.js';
-import { renderMomentum }                                       from './advanced/momentum.js';
-import { renderMatchupPredictor }                               from './advanced/predictor.js';
-import { renderWeekComparison, renderBestWorstDeck }            from './advanced/weekly.js';
-import { renderMMRGoals }                                       from './advanced/goals.js';
+import { renderMomentum }                                            from './advanced/momentum.js';
+import { renderMatchupPredictor }                                    from './advanced/predictor.js';
+import { renderWeekComparison, renderBestWorstDeck }                 from './advanced/weekly.js';
+import { renderInkWinrates, renderMatchupMatrix }                    from './advanced/inkstats.js';
 
 // ── Rendu complet du dashboard ─────────────────────────────────────────────
 
@@ -43,25 +41,30 @@ function renderAll(games) {
   renderDeckBars(games, 'oppColors', 'oppDeckBars', 2);
   renderTurnOrder(games);
   renderDurationChart(games);
-  renderLoreChart(games);
-  renderScatter(games);
-  renderTurnsChart(games);
-  renderMMRByDeck(games);
 
   // Récence
   renderStreak(games);
   renderTable(games);
 
   // Analyses avancées (données filtrées)
-  renderCardAnalysis(games);
-  renderHeatmap(games);
   renderMomentum(games);
   renderMatchupPredictor(games, store.activeDeck);
-  renderMMRGoals(games);
+
+  // Stats encres — toujours sur toutes les données
+  renderInkWinrates(store.allGames, 'inkWinrates');
+  renderMatchupMatrix(store.allGames, 'matchupMatrix');
 
   // Toujours sur l'ensemble des données (indépendant du filtre deck)
   renderWeekComparison(store.allGames);
   renderBestWorstDeck(store.allGames);
+}
+
+// ── Callback de re-rendu (déclenché par tout changement de filtre) ──────────
+
+function onRerender() {
+  const games = store.getFiltered();
+  updateFilterCount(games.length);
+  renderAll(games);
 }
 
 // ── Callbacks ──────────────────────────────────────────────────────────────
@@ -71,10 +74,9 @@ function onCSV(csvText) {
     const games = parseCSV(csvText);
     store.setGames(games);
     showDashboard();
-    buildFilterBar(store.allGames, (filtered, deck) => {
-      store.setActiveDeck(deck);
-      renderAll(filtered);
-    });
+    buildFilterBar(store.allGames, store.setActiveDeck.bind(store), onRerender);
+    buildFormatFilter(store.allGames, store.setActiveFormat.bind(store), onRerender);
+    buildDateFilter(store.setDateRange.bind(store), onRerender);
     renderAll(store.allGames);
   } catch (err) {
     showUploadScreen();
