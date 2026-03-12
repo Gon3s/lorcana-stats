@@ -208,6 +208,7 @@ body::before {
 .filter-count span { color: var(--gold-light); font-weight: 600; }
 
 .filter-bar-group { display: contents; }
+.filter-bar-group[hidden] { display: none; }
 .filter-sep { padding-left: 12px; border-left: 1px solid var(--border); margin-left: 4px; }
 .filter-date {
   background: var(--raised); border: 1px solid var(--border);
