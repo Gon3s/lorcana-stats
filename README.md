@@ -1,6 +1,7 @@
 <div align="center">
   <img src="assets/logo.svg" alt="Inkwell Stats" width="96" height="96">
-
+</div>
+    
 # Inkwell Stats — Lorcana Dashboard
 
 > Dashboard analytique client-side pour **Disney Lorcana** — importe ton historique CSV depuis [duels.ink](https://duels.ink) et visualise tes statistiques en temps réel.
@@ -8,13 +9,11 @@
 [![CI](https://github.com/Gon3s/lorcana-stats/actions/workflows/ci.yml/badge.svg)](https://github.com/Gon3s/lorcana-stats/actions/workflows/ci.yml)
 [![Deploy](https://github.com/Gon3s/lorcana-stats/actions/workflows/deploy.yml/badge.svg)](https://github.com/Gon3s/lorcana-stats/actions/workflows/deploy.yml)
 
-**Démos live**
+**🌐 Démos live**
+
 - GitHub Pages : [gon3s.github.io/lorcana-stats](https://gon3s.github.io/lorcana-stats/)
 - Vercel : [lorcana-stats.vercel.app](https://lorcana-stats.vercel.app)
-
-<img src="screenshots/preview.svg" alt="Aperçu du dashboard" width="100%">
-
-</div>
+  <img src="screenshots/preview.png" alt="Aperçu du dashboard" width="100%">
 
 ---
 
@@ -22,32 +21,32 @@
 
 ### Tableau de bord principal
 
-| Section | Contenu |
-|---|---|
-| **KPIs** | Parties jouées · Victoires/Défaites · Win rate · MMR actuel · Durée moyenne |
-| **Évolution MMR** | Courbe chronologique colorée par résultat |
-| **Répartition V/D** | Donut avec chiffres clés |
-| **Volume quotidien** | Barres empilées par jour |
-| **Ordre de jeu** | Win rate OTP vs OTD |
-| **Durée des parties** | Histogramme de distribution |
+| Section               | Contenu                                                                     |
+| --------------------- | --------------------------------------------------------------------------- |
+| **KPIs**              | Parties jouées · Victoires/Défaites · Win rate · MMR actuel · Durée moyenne |
+| **Évolution MMR**     | Courbe chronologique colorée par résultat                                   |
+| **Répartition V/D**   | Donut avec chiffres clés                                                    |
+| **Volume quotidien**  | Barres empilées par jour                                                    |
+| **Ordre de jeu**      | Win rate OTP vs OTD                                                         |
+| **Durée des parties** | Histogramme de distribution                                                 |
 
 ### Statistiques par Encre
 
-| Section | Contenu |
-|---|---|
-| **Winrate par deck** | Tes combinaisons de couleurs, classées par performance |
-| **Winrate vs adversaire** | Contre quels archétypes tu performes |
-| **Winrate par combinaison** | Chaque bicolorité avec barre de progression |
-| **Matrice de matchups** | Grille encre × encre colorisée par force du matchup |
+| Section                     | Contenu                                                |
+| --------------------------- | ------------------------------------------------------ |
+| **Winrate par deck**        | Tes combinaisons de couleurs, classées par performance |
+| **Winrate vs adversaire**   | Contre quels archétypes tu performes                   |
+| **Winrate par combinaison** | Chaque bicolorité avec barre de progression            |
+| **Matrice de matchups**     | Grille encre × encre colorisée par force du matchup    |
 
 ### Analyses avancées
 
-| Section | Contenu |
-|---|---|
-| **Momentum** | Win rate glissant sur 5 parties + détection de séries |
-| **Prédicteur de matchup** | Win rate historique contre chaque combinaison adverse |
-| **Comparaison hebdomadaire** | Cette semaine vs semaine précédente |
-| **Meilleur/Pire deck** | Classement récent (20 dernières parties) |
+| Section                      | Contenu                                               |
+| ---------------------------- | ----------------------------------------------------- |
+| **Momentum**                 | Win rate glissant sur 5 parties + détection de séries |
+| **Prédicteur de matchup**    | Win rate historique contre chaque combinaison adverse |
+| **Comparaison hebdomadaire** | Cette semaine vs semaine précédente                   |
+| **Meilleur/Pire deck**       | Classement récent (20 dernières parties)              |
 
 ### Page Mes Decks
 
@@ -78,15 +77,15 @@
 
 ## Stack technique
 
-| Couche | Technologie |
-|---|---|
-| Langage | Vanilla JavaScript (ES Modules, sans bundler) |
-| Styles | Tailwind CSS v3 + variables CSS personnalisées |
-| Graphiques | [Chart.js 4.4.1](https://chartjs.org) — vendorisé (`vendor/`) |
+| Couche      | Technologie                                                      |
+| ----------- | ---------------------------------------------------------------- |
+| Langage     | Vanilla JavaScript (ES Modules, sans bundler)                    |
+| Styles      | Tailwind CSS v3 + variables CSS personnalisées                   |
+| Graphiques  | [Chart.js 4.4.1](https://chartjs.org) — vendorisé (`vendor/`)    |
 | Parsing CSV | [PapaParse 5.4.1](https://papaparse.com) — vendorisé (`vendor/`) |
-| Polices | [Cinzel + Crimson Pro](https://fonts.google.com) |
-| Déploiement | GitHub Pages (principal) · Vercel (miroir) |
-| CI/CD | GitHub Actions |
+| Polices     | [Cinzel + Crimson Pro](https://fonts.google.com)                 |
+| Déploiement | GitHub Pages (principal) · Vercel (miroir)                       |
+| CI/CD       | GitHub Actions                                                   |
 
 Aucun framework, bundler ou transpileur — les modules ES sont chargés directement par le navigateur.
 
@@ -160,10 +159,13 @@ Puis ouvre `http://localhost:8000` et charge `data/game-history.csv` pour tester
 ## Déploiement
 
 ### GitHub Pages
+
 Le déploiement se déclenche automatiquement à chaque push sur `main` via GitHub Actions.
 Pour un nouveau fork :
+
 1. **Settings → Pages** → source : **GitHub Actions**
 2. Push sur `main` — le workflow déploie automatiquement
 
 ### Vercel
+
 Connecte le dépôt sur [vercel.com](https://vercel.com) — aucune configuration requise, le projet est entièrement statique.

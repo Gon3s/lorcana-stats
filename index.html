@@ -114,14 +114,16 @@
       <!-- FILTRE -->
       <div class="filter-bar">
         <span class="filter-label">Deck</span>
-        <div class="filter-pills" id="filterPills"></div>
+        <select id="deckSelect" class="filter-select" aria-label="Filtre par deck"></select>
+        <span id="deckSelectIcons" class="flex items-center gap-1 flex-shrink-0"></span>
 
-        <span id="filterFormatSection" class="filter-bar-group" hidden>
-          <span class="filter-label filter-sep">Format</span>
-          <div class="filter-pills" id="filterFormat"></div>
+        <!-- Sous-filtre version (affiché si le deck a plusieurs versions) -->
+        <span id="versionSelectSection" class="filter-bar-group" hidden>
+          <span class="filter-label filter-sep">Version</span>
+          <select id="versionSelect" class="filter-select" aria-label="Filtre par version"></select>
         </span>
 
-        <!-- F5 : filtre par file de jeu -->
+        <!-- Filtre par file de jeu -->
         <span id="filterQueueSection" class="filter-bar-group" hidden>
           <span class="filter-label filter-sep">File</span>
           <div class="filter-pills" id="filterQueue"></div>
@@ -200,8 +202,8 @@
         </div>
       </div>
 
-      <!-- ─── DECK WINRATES ─── -->
-      <h2 class="section-label">Analyse par Deck</h2>
+      <!-- ─── STATISTIQUES PAR ENCRE ─── -->
+      <h2 class="section-label">Statistiques par Encre</h2>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div class="card">
           <div class="card-title">Winrate — mon deck</div>
@@ -214,12 +216,17 @@
           <div id="oppDeckBars"></div>
         </div>
       </div>
-
-      <!-- ─── DELTA MMR PAR DECK (N7) ─── -->
-      <div class="card mb-6">
-        <div class="card-title">Delta MMR moyen par deck</div>
-        <div class="card-subtitle">Gain / perte MMR moyen par partie jouée (≥ 3 parties)</div>
-        <div id="mmrDeltaBars"></div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div class="card">
+          <div class="card-title">Winrate par combinaison jouée</div>
+          <div class="card-subtitle">Performance de chaque bicolorité dans tes parties</div>
+          <div id="inkWinrates"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Matrice de matchups</div>
+          <div class="card-subtitle">Ma combinaison (ligne) vs combinaison adverse (colonne)</div>
+          <div id="matchupMatrix"></div>
+        </div>
       </div>
 
       <!-- ─── STATS DE JEU ─── -->
@@ -256,21 +263,6 @@
         </div>
         <div id="momentumStreaks" class="flex flex-wrap gap-2 mb-3"></div>
         <div class="chart-wrap" style="height:200px"><canvas id="momentumChart"></canvas></div>
-      </div>
-
-      <!-- ─── STATS PAR ENCRE ─── -->
-      <h2 class="section-label">Statistiques par Encre</h2>
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div class="card">
-          <div class="card-title">Winrate par combinaison jouée</div>
-          <div class="card-subtitle">Performance de chaque bicolorité dans tes parties</div>
-          <div id="inkWinrates"></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Matrice de matchups</div>
-          <div class="card-subtitle">Ma combinaison (ligne) vs combinaison adverse (colonne)</div>
-          <div id="matchupMatrix"></div>
-        </div>
       </div>
 
       <!-- ─── MATCHUP PREDICTOR ─── -->
