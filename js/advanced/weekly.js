@@ -3,6 +3,8 @@
  * getISOWeek, weekStats et renderBestWorstDeck sont des fonctions pures.
  */
 
+import { esc } from '../utils/html.js';
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 function getISOWeek(dateStr) {
@@ -115,7 +117,7 @@ export function renderBestWorstDeck(allGames) {
     return `
       <div class="bw-row" style="background:${bg};border-color:${border}">
         <span class="bw-medal">${medal}</span>
-        <span class="bw-deck">${s.deck}</span>
+        <span class="bw-deck">${esc(s.deck)}</span>
         <div class="bw-bar-wrap">
           <div class="bw-bar" style="width:${s.rate.toFixed(0)}%;background:${color}"></div>
         </div>

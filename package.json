@@ -2,11 +2,14 @@
   "name": "lorcana-stats",
   "private": true,
   "scripts": {
-    "build:css": "tailwindcss -i css/tailwind.input.css -o css/tailwind.css --minify",
-    "build":     "npm run build:css",
-    "watch:css": "tailwindcss -i css/tailwind.input.css -o css/tailwind.css --watch"
+    "build:css":    "tailwindcss -i css/tailwind.input.css -o css/tailwind.css --minify",
+    "build:vendor": "cp node_modules/chart.js/dist/chart.umd.js vendor/chart.umd.js && cp node_modules/papaparse/papaparse.min.js vendor/papaparse.min.js",
+    "build":        "npm run build:css && npm run build:vendor",
+    "watch:css":    "tailwindcss -i css/tailwind.input.css -o css/tailwind.css --watch"
   },
   "devDependencies": {
+    "chart.js":    "4.4.1",
+    "papaparse":   "5.4.1",
     "tailwindcss": "^3.4.17"
   }
 }

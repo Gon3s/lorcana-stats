@@ -82,8 +82,8 @@
 |---|---|
 | Langage | Vanilla JavaScript (ES Modules, sans bundler) |
 | Styles | Tailwind CSS v3 + variables CSS personnalisées |
-| Graphiques | [Chart.js 4](https://chartjs.org) via CDN |
-| Parsing CSV | [PapaParse 5](https://papaparse.com) via CDN |
+| Graphiques | [Chart.js 4.4.1](https://chartjs.org) — vendorisé (`vendor/`) |
+| Parsing CSV | [PapaParse 5.4.1](https://papaparse.com) — vendorisé (`vendor/`) |
 | Polices | [Cinzel + Crimson Pro](https://fonts.google.com) |
 | Déploiement | GitHub Pages (principal) · Vercel (miroir) |
 | CI/CD | GitHub Actions |
@@ -118,6 +118,9 @@ lorcana-stats/
 │   ├── utils/                  # Utilitaires (ink, deck-builder)
 │   └── pages/
 │       └── decks.js            # Page Mes Decks
+├── vendor/
+│   ├── chart.umd.js            # Chart.js 4.4.1 (régénéré via npm run build:vendor)
+│   └── papaparse.min.js        # PapaParse 5.4.1 (régénéré via npm run build:vendor)
 ├── data/
 │   └── game-history.csv        # CSV d'exemple pour les tests
 └── .github/workflows/          # CI (validation) + CD (déploiement)
@@ -128,13 +131,17 @@ lorcana-stats/
 ## Développement local
 
 ```bash
-# Installer les dépendances (Tailwind CLI uniquement)
+# Installer les dépendances
 npm install
 
-# Compiler le CSS une fois
-npm run build:css
+# Tout compiler en une fois (CSS + copie des librairies vendor)
+npm run build
 
-# Mode watch (recompilation automatique)
+# Ou séparément :
+npm run build:css     # Compiler le CSS Tailwind
+npm run build:vendor  # Copier Chart.js et PapaParse dans vendor/
+
+# Mode watch CSS (recompilation automatique)
 npm run watch:css
 ```
 

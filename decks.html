@@ -16,8 +16,8 @@
   <link rel="stylesheet" href="css/tailwind.css">
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- PapaParse (utilisé par parser.js) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <!-- PapaParse vendorisé — hébergé en local (npm run build:vendor) -->
+  <script src="vendor/papaparse.min.js"></script>
 </head>
 <body class="bg-ink font-body text-ltext">
 
@@ -66,7 +66,7 @@
 
     <footer class="text-center mt-14 pt-6 border-t border-lborder text-muted text-sm italic">
       Inkwell Stats · données
-      <a href="https://duels.ink" target="_blank" rel="noopener" class="text-gold no-underline hover:underline">
+      <a href="https://duels.ink" target="_blank" rel="noopener noreferrer" class="text-gold no-underline hover:underline">
         duels.ink
       </a>
       · <a href="index.html" class="footer-link">Retour au dashboard</a>
