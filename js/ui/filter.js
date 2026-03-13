@@ -1,9 +1,10 @@
 /**
- * filter.js — Barre de filtres (deck, format, queue, période) (SRP)
+ * filter.js — Barre de filtres (deck, version, queue, période) (SRP)
  * Responsabilité unique : construire les contrôles de filtre et notifier les changements.
  */
 
-import { inkPillContent } from '../utils/ink.js';
+import { inkBadge }    from '../utils/ink.js';
+import { buildDecks }  from '../utils/deck-builder.js';
 
 // ── Compteur ────────────────────────────────────────────────────────────────
 
@@ -12,7 +13,7 @@ export function updateFilterCount(n) {
     `<span>${n}</span> partie${n > 1 ? 's' : ''}`;
 }
 
-// ── Pills génériques ─────────────────────────────────────────────────────────
+// ── Pills génériques (utilisées par le filtre queue) ─────────────────────────
 
 function createPill(html, value, isActive, onPick) {
   const btn = document.createElement('button');
@@ -55,66 +56,106 @@ function addKeyboardNav(pillsEl) {
   });
 }
 
-// ── Filtre deck ──────────────────────────────────────────────────────────────
+// ── Filtre deck (select + sous-filtre version) ────────────────────────────────
 
 /**
  * @param {Game[]}               allGames
- * @param {function(string)}     setDeck   — store.setActiveDeck
+ * @param {function(string)}     setDeck        — store.setActiveDeck
+ * @param {function(Set|null)}   setVersionKeys — store.setActiveVersionKeys
  * @param {function()}           onRerender
  */
-export function buildFilterBar(allGames, setDeck, onRerender) {
-  const decks   = [...new Set(allGames.map(g => g.myColors))].sort();
-  const pillsEl = document.getElementById('filterPills');
-  pillsEl.innerHTML = '';
-  // U1 : rôle tablist sur le conteneur
-  pillsEl.setAttribute('role', 'tablist');
-  pillsEl.setAttribute('aria-label', 'Filtre par deck');
+export function buildDeckSelect(allGames, setDeck, setVersionKeys, onRerender) {
+  const selectEl = document.getElementById('deckSelect');
+  if (!selectEl) return;
 
-  const onPick = (value, container) => {
-    activatePill(container, value);
-    setDeck(value);
-    onRerender();
-  };
+  // Peupler le select principal
+  selectEl.innerHTML = '';
+  const allOpt = document.createElement('option');
+  allOpt.value       = 'all';
+  allOpt.textContent = 'Tous les decks';
+  selectEl.appendChild(allOpt);
 
-  pillsEl.appendChild(createPill('Tous', 'all', true, onPick));
-  decks.forEach(d => pillsEl.appendChild(createPill(inkPillContent(d), d, false, onPick)));
-  addKeyboardNav(pillsEl);
-}
+  const decks = [...new Set(allGames.map(g => g.myColors))].sort();
+  decks.forEach(d => {
+    const opt = document.createElement('option');
+    opt.value       = d;
+    opt.textContent = d;
+    selectEl.appendChild(opt);
+  });
 
-// ── Filtre format (BO1 / BO3) ────────────────────────────────────────────────
-
-/**
- * @param {Game[]}               allGames
- * @param {function(string)}     setFormat — store.setActiveFormat
- * @param {function()}           onRerender
- */
-export function buildFormatFilter(allGames, setFormat, onRerender) {
-  const formats = [...new Set(allGames.map(g => g.matchFormat).filter(Boolean))].sort();
-  const pillsEl = document.getElementById('filterFormat');
-  pillsEl.innerHTML = '';
-
-  const section = document.getElementById('filterFormatSection');
-  if (formats.length <= 1) {
-    if (section) section.hidden = true;
-    return;
+  // Données de versions pour le sous-filtre
+  const deckVersions   = buildDecks(allGames);
+  const versionsByColor = {};
+  for (const dv of deckVersions) {
+    (versionsByColor[dv.colors] = versionsByColor[dv.colors] || []).push(dv);
   }
-  if (section) section.hidden = false;
 
-  pillsEl.setAttribute('role', 'tablist');
-  pillsEl.setAttribute('aria-label', 'Filtre par format');
+  const versionSection = document.getElementById('versionSelectSection');
+  const versionSelectEl = document.getElementById('versionSelect');
+  const iconsEl         = document.getElementById('deckSelectIcons');
 
-  const onPick = (value, container) => {
-    activatePill(container, value);
-    setFormat(value);
-    onRerender();
+  /** Met à jour l'icône du deck sélectionné */
+  const updateIcons = deck => {
+    if (iconsEl) iconsEl.innerHTML = deck !== 'all' ? inkBadge(deck, 18) : '';
   };
 
-  pillsEl.appendChild(createPill('Tous', 'all', true, onPick));
-  formats.forEach(f => pillsEl.appendChild(createPill(f, f, false, onPick)));
-  addKeyboardNav(pillsEl);
+  /** Met à jour le select de version selon le deck choisi */
+  const updateVersionSelect = deck => {
+    if (!versionSection || !versionSelectEl) return;
+    const versions = deck !== 'all' ? (versionsByColor[deck] || []) : [];
+
+    if (versions.length > 1) {
+      versionSelectEl.innerHTML = '';
+      const allVersionOpt = document.createElement('option');
+      allVersionOpt.value       = 'all';
+      allVersionOpt.textContent = 'Toutes les versions';
+      versionSelectEl.appendChild(allVersionOpt);
+
+      versions.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value       = String(v.version - 1);  // index 0-based
+        opt.textContent = `v${v.version} — ${v.total} partie${v.total > 1 ? 's' : ''} (${v.firstPlayed} → ${v.lastPlayed})`;
+        versionSelectEl.appendChild(opt);
+      });
+
+      versionSection.hidden = false;
+    } else {
+      versionSection.hidden = true;
+      setVersionKeys(null);
+    }
+  };
+
+  // Événement : changement de deck
+  selectEl.addEventListener('change', () => {
+    const deck = selectEl.value;
+    setDeck(deck);
+    setVersionKeys(null);
+    updateIcons(deck);
+    updateVersionSelect(deck);
+    onRerender();
+  });
+
+  // Événement : changement de version
+  if (versionSelectEl) {
+    versionSelectEl.addEventListener('change', () => {
+      const deck       = selectEl.value;
+      const versionIdx = versionSelectEl.value;
+      if (versionIdx === 'all') {
+        setVersionKeys(null);
+      } else {
+        const versions = versionsByColor[deck] || [];
+        const v        = versions[parseInt(versionIdx)];
+        setVersionKeys(v ? v.gameKeys : null);
+      }
+      onRerender();
+    });
+  }
+
+  // Initialisation : masquer le select de version
+  if (versionSection) versionSection.hidden = true;
 }
 
-// ── Filtre queue / file de jeu (F5) ──────────────────────────────────────────
+// ── Filtre queue / file de jeu ────────────────────────────────────────────────
 
 /**
  * @param {Game[]}               allGames
@@ -148,16 +189,23 @@ export function buildQueueFilter(allGames, setQueue, onRerender) {
   addKeyboardNav(pillsEl);
 }
 
-// ── Filtre période ───────────────────────────────────────────────────────────
+// ── Filtre période ────────────────────────────────────────────────────────────
 
 /**
- * @param {function(string, string)} setDateRange — store.setDateRange
+ * @param {function(string, string)} setDateRange  — store.setDateRange
  * @param {function()}               onRerender
+ * @param {string|null}              initialStart  — "YYYY-MM-DD" pré-sélectionné
  */
-export function buildDateFilter(setDateRange, onRerender) {
+export function buildDateFilter(setDateRange, onRerender, initialStart = null) {
   const startEl = document.getElementById('dateStart');
   const endEl   = document.getElementById('dateEnd');
   const resetEl = document.getElementById('dateResetBtn');
+
+  // Pré-remplir la date de début par défaut
+  if (initialStart) {
+    startEl.value = initialStart;
+    if (resetEl) resetEl.hidden = false;
+  }
 
   const apply = () => {
     const start = startEl.value || null;
