@@ -238,6 +238,25 @@ body::before {
 .filter-reset { padding: 4px 10px; opacity: .7; }
 .filter-reset:hover { opacity: 1; }
 
+/* Select de filtre (deck, version) */
+.filter-select {
+  background: var(--raised);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 13px;
+  font-family: 'Cinzel', serif;
+  letter-spacing: .03em;
+  cursor: pointer;
+  flex-shrink: 0;
+  outline: none;
+  transition: border-color .2s;
+  max-width: 220px;
+}
+.filter-select:focus        { border-color: var(--gold); }
+.filter-select option       { background: var(--surface); font-family: 'Crimson Pro', serif; letter-spacing: 0; }
+
 /* ── Chart containers ── */
 .chart-wrap { position: relative; width: 100%; }
 
