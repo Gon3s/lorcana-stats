@@ -82,8 +82,8 @@
 |---|---|
 | Langage | Vanilla JavaScript (ES Modules, sans bundler) |
 | Styles | Tailwind CSS v3 + variables CSS personnalisées |
-| Graphiques | [Chart.js 4](https://chartjs.org) via CDN |
-| Parsing CSV | [PapaParse 5](https://papaparse.com) via CDN |
+| Graphiques | [Chart.js 4.4.1](https://chartjs.org) — vendorisé (`vendor/`) |
+| Parsing CSV | [PapaParse 5.4.1](https://papaparse.com) — vendorisé (`vendor/`) |
 | Polices | [Cinzel + Crimson Pro](https://fonts.google.com) |
 | Déploiement | GitHub Pages (principal) · Vercel (miroir) |
 | CI/CD | GitHub Actions |
