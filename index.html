@@ -18,13 +18,9 @@
   <!-- Styles personnalisés (animations, composants complexes, variables CSS) -->
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- Bibliothèques CDN — integrity (SRI) + crossorigin pour sécuriser le chargement -->
-  <!-- Note : vérifier le hash Chart.js sur https://cdnjs.com/libraries/Chart.js/4.4.1 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"
-          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"
-          integrity="sha512-dfX5uYVXzyU8+KHqj8bjo7UkOdg18PaOtpa48djpNbZHwExddghZ+ZmzWT06R5v6NSk3ZUfsH6FNEDepLx9hPQ=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- Bibliothèques vendorisées — hébergées en local (npm run build:vendor) -->
+  <script src="vendor/chart.umd.js"></script>
+  <script src="vendor/papaparse.min.js"></script>
 </head>
 <body class="bg-ink font-body text-ltext">
 
