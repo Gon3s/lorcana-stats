@@ -281,6 +281,15 @@ body::before {
   margin-bottom: 18px;
 }
 
+/* ── Filtre queue local à une section (MMR, Momentum) ── */
+.section-filter-wrap {
+  border-top: 1px solid var(--border);
+  padding: 10px 0 4px;
+  margin-bottom: 14px;
+}
+.section-filter-wrap .filter-pills { gap: 6px; }
+.section-filter-wrap .filter-pill  { padding: 3px 12px; font-size: 12px; }
+
 /* ── Barres deck winrate ── */
 .bar-row  { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
 .bar-label{ width: 50px; display: flex; align-items: center; gap: 4px; flex-shrink: 0; }

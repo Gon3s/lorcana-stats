@@ -189,6 +189,41 @@ export function buildQueueFilter(allGames, setQueue, onRerender) {
   addKeyboardNav(pillsEl);
 }
 
+// ── Filtre queue local à une section (MMR, Momentum) ─────────────────────────
+
+/**
+ * Construit des pills de filtre par file directement dans une section.
+ * Indépendant du filtre queue global.
+ * @param {string}           pillsId   — id du conteneur <div class="filter-pills">
+ * @param {string}           sectionId — id du wrapper à afficher/masquer
+ * @param {string[]}         queues    — liste des valeurs de queue disponibles
+ * @param {function(string)} onPick    — callback(queueValue)
+ */
+export function buildSectionQueueFilter(pillsId, sectionId, queues, onPick) {
+  const section = document.getElementById(sectionId);
+  const pillsEl = document.getElementById(pillsId);
+  if (!pillsEl) return;
+
+  if (queues.length <= 1) {
+    if (section) section.hidden = true;
+    return;
+  }
+  if (section) section.hidden = false;
+
+  pillsEl.innerHTML = '';
+  pillsEl.setAttribute('role', 'tablist');
+  pillsEl.setAttribute('aria-label', 'Filtre par file');
+
+  const pick = (value, container) => {
+    activatePill(container, value);
+    onPick(value);
+  };
+
+  pillsEl.appendChild(createPill('Toutes', 'all', true, pick));
+  queues.forEach(q => pillsEl.appendChild(createPill(q, q, false, pick)));
+  addKeyboardNav(pillsEl);
+}
+
 // ── Filtre période ────────────────────────────────────────────────────────────
 
 /**

@@ -14,9 +14,6 @@ export function updateHeader(games) {
   const wins     = games.filter(g => g.result === 'Win');
   const total    = games.length;
   const endMMR   = games[total - 1].mmrAfter;
-  const startMMR = games[0].mmrBefore;
-  const peakMMR  = Math.max(...games.map(g => g.mmrAfter));
-  const mmrGain  = endMMR - startMMR;
   const avgDur   = (games.reduce((s, g) => s + g.duration, 0) / total).toFixed(1);
   const dates    = games.map(g => g.date).sort();
 
@@ -29,7 +26,16 @@ export function updateHeader(games) {
 
   document.getElementById('headerMeta').textContent =
     `${dates[0]} → ${dates[dates.length - 1]}  ·  ${total} parties`;
+}
 
+/** Met à jour le badge MMR (Départ → Peak → Actuel) selon les parties passées */
+export function updateMMRBadge(games) {
+  if (!games.length) return;
+  const total    = games.length;
+  const startMMR = games[0].mmrBefore;
+  const endMMR   = games[total - 1].mmrAfter;
+  const peakMMR  = Math.max(...games.map(g => g.mmrAfter));
+  const mmrGain  = endMMR - startMMR;
   document.getElementById('mmrBadge').innerHTML =
     `✦ Départ: ${startMMR} &nbsp;→&nbsp; Peak: ${peakMMR} &nbsp;→&nbsp; Actuel: ${endMMR}` +
     ` &nbsp;(${mmrGain >= 0 ? '+' : ''}${mmrGain} pts)`;

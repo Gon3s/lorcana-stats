@@ -11,8 +11,10 @@ import { parseCSV }         from './parser.js';
 import { showDashboard, showUploadScreen }                           from './ui/screens.js';
 import { initUploadScreen, checkSavedData, showUploadError }         from './ui/upload.js';
 import { buildDeckSelect, buildQueueFilter,
-         buildDateFilter, updateFilterCount }                        from './ui/filter.js';
-import { updateHeader, renderTable, renderStreak }                   from './ui/dashboard.js';
+         buildDateFilter, updateFilterCount,
+         buildSectionQueueFilter }                                   from './ui/filter.js';
+import { updateHeader, updateMMRBadge,
+         renderTable, renderStreak }                                 from './ui/dashboard.js';
 
 // Graphiques de base
 import { renderMMRChart }                                            from './charts/mmr.js';
@@ -24,6 +26,32 @@ import { renderMomentum }                                            from './adv
 import { renderMatchupPredictor }                                    from './advanced/predictor.js';
 import { renderWeekComparison, renderBestWorstDeck }                 from './advanced/weekly.js';
 import { renderInkWinrates, renderMatchupMatrix }                    from './advanced/inkstats.js';
+
+// ── État local des filtres par section ──────────────────────────────────────
+// Ces sections sont indépendantes du filtre queue global.
+
+let _mmrQueue      = 'all';
+let _momentumQueue = 'all';
+
+// ── Section MMR (indépendante du filtre queue global) ────────────────────────
+
+function renderMMRSection() {
+  const base  = store.getFilteredExceptQueue();
+  if (!base.length) return;
+  const games = _mmrQueue === 'all' ? base : base.filter(g => g.queue === _mmrQueue);
+  if (!games.length) return;
+  renderMMRChart(games);
+  updateMMRBadge(games);
+}
+
+// ── Section Momentum (indépendante du filtre queue global) ───────────────────
+
+function renderMomentumSection() {
+  const base  = store.getFilteredExceptQueue();
+  if (!base.length) return;
+  const games = _momentumQueue === 'all' ? base : base.filter(g => g.queue === _momentumQueue);
+  renderMomentum(games);
+}
 
 // ── P1 : rendu global (données indépendantes du filtre) ─────────────────────
 // Appelé une seule fois au chargement du CSV.
@@ -44,7 +72,6 @@ function renderFiltered(games) {
   updateHeader(games);
 
   // Graphiques principaux
-  renderMMRChart(games);
   renderWinLossDonut(games);
   renderDailyChart(games);
   renderDeckBars(games, 'myColors',  'myDeckBars');
@@ -57,7 +84,6 @@ function renderFiltered(games) {
   renderTable(games);
 
   // Analyses dépendantes du filtre
-  renderMomentum(games);
   renderMatchupPredictor(games, store.activeDeck);
 }
 
@@ -67,6 +93,9 @@ function onRerender() {
   const games = store.getFiltered();
   updateFilterCount(games.length);
   renderFiltered(games);
+  // MMR et Momentum s'actualisent sur leur propre base (sans queue globale)
+  renderMMRSection();
+  renderMomentumSection();
 }
 
 // ── Callbacks ──────────────────────────────────────────────────────────────
@@ -94,10 +123,27 @@ function onCSV(csvText) {
     buildQueueFilter(allGames, store.setActiveQueue.bind(store), onRerender);
     buildDateFilter(store.setDateRange.bind(store), onRerender, dateDefault);
 
+    // Filtres queue locaux aux sections MMR et Momentum
+    const queues = [...new Set(allGames.map(g => g.queue).filter(Boolean))].sort();
+
+    _mmrQueue = 'all';
+    buildSectionQueueFilter('mmrQueuePills', 'mmrQueueSection', queues, q => {
+      _mmrQueue = q;
+      renderMMRSection();
+    });
+
+    _momentumQueue = 'all';
+    buildSectionQueueFilter('momentumQueuePills', 'momentumQueueSection', queues, q => {
+      _momentumQueue = q;
+      renderMomentumSection();
+    });
+
     const filtered = store.getFiltered();
     updateFilterCount(filtered.length);
     renderGlobal(allGames);     // P1 : sections indépendantes du filtre
     renderFiltered(filtered);   // P1 : sections filtrables (avec filtre date appliqué)
+    renderMMRSection();         // rendu initial MMR (toutes files)
+    renderMomentumSection();    // rendu initial Momentum (toutes files)
 
     // B4 : affichage des avertissements de parsing (non bloquants)
     if (warnings.length) showUploadError(warnings.join(' · '));

@@ -43,4 +43,13 @@ export const store = {
       .filter(g => !this._dateStart || g.date >= this._dateStart)
       .filter(g => !this._dateEnd   || g.date <= this._dateEnd);
   },
+
+  /** Filtre sans la queue — base pour les sections MMR et Momentum qui ont leur propre filtre file */
+  getFilteredExceptQueue() {
+    return this._allGames
+      .filter(g => this._activeDeck         === 'all' || g.myColors === this._activeDeck)
+      .filter(g => !this._activeVersionKeys || this._activeVersionKeys.has(g.startedAt))
+      .filter(g => !this._dateStart || g.date >= this._dateStart)
+      .filter(g => !this._dateEnd   || g.date <= this._dateEnd);
+  },
 };
