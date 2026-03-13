@@ -1,96 +1,151 @@
-# 🎴 Inkwell Stats — Lorcana Dashboard
+# Inkwell Stats — Lorcana Dashboard
 
-A personal stats dashboard for Disney Lorcana — reads your game history CSV exported from [duels.ink](https://duels.ink) and displays comprehensive analytics.
+> Dashboard analytique client-side pour **Disney Lorcana** — importe ton historique CSV depuis [duels.ink](https://duels.ink) et visualise tes statistiques en temps réel.
 
-## 🚀 GitHub Pages Setup (via GitHub Actions)
+[![CI](https://github.com/Gon3s/lorcana-stats/actions/workflows/ci.yml/badge.svg)](https://github.com/Gon3s/lorcana-stats/actions/workflows/ci.yml)
+[![Deploy](https://github.com/Gon3s/lorcana-stats/actions/workflows/deploy.yml/badge.svg)](https://github.com/Gon3s/lorcana-stats/actions/workflows/deploy.yml)
 
-1. **Fork / clone** this repository
-2. Go to your repo **Settings → Pages**
-3. Set source to **GitHub Actions**
-4. Push to `main` — the Action deploys automatically
-5. Your dashboard will be live at `https://<username>.github.io/<repo-name>/`
+**🌐 Démos live**
+- GitHub Pages : [gon3s.github.io/lorcana-stats](https://gon3s.github.io/lorcana-stats/)
+- Vercel : [lorcana-stats.vercel.app](https://lorcana-stats.vercel.app)
 
-> You can also trigger a deployment manually: **Actions → Deploy to GitHub Pages → Run workflow**
+---
 
-## 📥 How to export your CSV from duels.ink
+## Fonctionnalités
 
-1. Go to [duels.ink](https://duels.ink) and log in
-2. Navigate to your **Game History**
-3. Click **Export CSV**
-4. Upload the file directly on the dashboard (drag & drop or browse)
+### Tableau de bord principal
 
-> Your data is read **locally in your browser** — nothing is sent to any server.
+| Section | Contenu |
+|---|---|
+| **KPIs** | Parties jouées · Victoires/Défaites · Win rate · MMR actuel · Durée moyenne |
+| **Évolution MMR** | Courbe chronologique colorée par résultat |
+| **Répartition V/D** | Donut avec chiffres clés |
+| **Volume quotidien** | Barres empilées par jour |
+| **Ordre de jeu** | Win rate OTP vs OTD |
+| **Durée des parties** | Histogramme de distribution |
 
-## 📊 Features
+### Statistiques par Encre
 
-### Core stats
-- **KPIs** — games played, wins, losses, win rate, current MMR, avg duration
-- **MMR evolution** — line chart with every game colored by result
-- **Win/Loss donut** — ratio with key figures
-- **Daily volume** — stacked bar by day
+| Section | Contenu |
+|---|---|
+| **Winrate par deck** | Tes combinaisons de couleurs, classées par performance |
+| **Winrate vs adversaire** | Contre quels archétypes tu performes |
+| **Winrate par combinaison** | Chaque bicolorité avec barre de progression |
+| **Matrice de matchups** | Grille encre × encre colorisée par force du matchup |
 
-### Deck analysis
-- **Winrate by your deck** — all color combinations you played
-- **Winrate vs opponent colors** — how you fare against each archetype
-- **Avg lore on wins** — per deck
-- **Avg MMR delta by deck** — which deck gains you the most rating
+### Analyses avancées
 
-### Game stats
-- **Turn order (OTP/OTD)** — winrate going first vs second
-- **Duration distribution** — how long your games last
-- **Turns distribution** — short vs long games
-- **Lore scatter plot** — your score vs opponent, colored by result
+| Section | Contenu |
+|---|---|
+| **Momentum** | Win rate glissant sur 5 parties + détection de séries |
+| **Prédicteur de matchup** | Win rate historique contre chaque combinaison adverse |
+| **Comparaison hebdomadaire** | Cette semaine vs semaine précédente |
+| **Meilleur/Pire deck** | Classement récent (20 dernières parties) |
 
-### Advanced analytics
-- **Card key winrate** — parses the Decklist column, shows top 20 cards by games played with winrate
-- **Heatmap hour/day** — when during the week you perform best (UTC)
-- **Momentum chart** — rolling 5-game winrate with streak highlights
-- **Matchup predictor** — historical winrate against every opponent color combo
-- **Week comparison** — this week vs last week (games, winrate, MMR delta, duration)
-- **Best/worst deck — last 20 games** — recent performance ranking
-- **MMR Goals** — set a target MMR, track progress and estimated games needed
+### Page Mes Decks
 
-### UX
-- **Upload screen** — drag & drop or browse, with validation
-- **localStorage persistence** — data saved between visits, resume on next visit
-- **Deck filter** — all charts update live when filtering by deck
+- Profil complet par deck avec decklist intégrale
+- Détection automatique des **versions successives** (quand la composition change)
+- **Diff visuel** entre deux versions (cartes ajoutées / retirées / modifiées)
+- Stats par version : win rate, MMR moyen/partie, dates jouées
 
-## 📂 Project Structure
+### Filtres
+
+- **Deck** — sélecteur avec sous-filtre par version si plusieurs versions détectées
+- **File de jeu** — filtre par queue (Ranked, Casual…), masqué si une seule file
+- **Période** — plage de dates avec défaut à 15 derniers jours
+- Tous les graphiques se mettent à jour en temps réel
+
+---
+
+## Import des données
+
+1. Connecte-toi sur [duels.ink](https://duels.ink)
+2. Accède à ton **Historique de parties**
+3. Clique sur **Exporter CSV**
+4. Glisse-dépose le fichier sur le dashboard (ou utilise le bouton de sélection)
+
+> **Confidentialité** — toutes les données restent dans ton navigateur. Aucune information n'est transmise à un serveur externe.
+
+---
+
+## Stack technique
+
+| Couche | Technologie |
+|---|---|
+| Langage | Vanilla JavaScript (ES Modules, sans bundler) |
+| Styles | Tailwind CSS v3 + variables CSS personnalisées |
+| Graphiques | [Chart.js 4](https://chartjs.org) via CDN |
+| Parsing CSV | [PapaParse 5](https://papaparse.com) via CDN |
+| Polices | [Cinzel + Crimson Pro](https://fonts.google.com) |
+| Déploiement | GitHub Pages (principal) · Vercel (miroir) |
+| CI/CD | GitHub Actions |
+
+Aucun framework, bundler ou transpileur — les modules ES sont chargés directement par le navigateur.
+
+---
+
+## Structure du projet
 
 ```
-inkwell-stats/
-├── index.html
+lorcana-stats/
+├── index.html                  # Point d'entrée unique
+├── decks.html                  # Page Mes Decks
 ├── css/
-│   └── style.css
+│   ├── style.css               # Styles personnalisés + variables CSS
+│   ├── tailwind.input.css      # Directives Tailwind (@tailwind …)
+│   └── tailwind.css            # Généré — ne pas modifier manuellement
 ├── js/
-│   ├── parser.js      ← CSV + Decklist parsing
-│   ├── ui.js          ← Upload screen, filter, navigation, table
-│   ├── charts.js      ← Base charts (MMR, donut, bars, scatter…)
-│   ├── advanced.js    ← Advanced analytics (heatmap, momentum, predictor…)
-│   └── app.js         ← Main orchestrator
+│   ├── app.js                  # Orchestrateur principal
+│   ├── store.js                # État centralisé (jeux + filtres actifs)
+│   ├── parser.js               # Parsing et validation du CSV
+│   ├── constants.js            # Constantes partagées
+│   ├── charts/                 # Graphiques Chart.js (MMR, distribution, gameplay)
+│   ├── advanced/               # Analyses avancées (momentum, matchups, weekly…)
+│   ├── ui/                     # Composants UI (filtres, écrans, dashboard)
+│   ├── utils/                  # Utilitaires (ink, deck-builder)
+│   └── pages/
+│       └── decks.js            # Page Mes Decks
+├── assets/inks/                # Icônes officielles Lorcana (PNG)
 ├── data/
-│   └── game-history.csv  ← Optional: pre-loaded CSV (not required)
-├── .github/
-│   └── workflows/
-│       └── deploy.yml ← GitHub Actions deployment
-└── README.md
+│   └── game-history.csv        # CSV d'exemple pour les tests
+└── .github/workflows/          # CI (validation) + CD (déploiement)
 ```
 
-## 🛠 Local development
+---
+
+## Développement local
 
 ```bash
-# Any static HTTP server works:
+# Installer les dépendances (Tailwind CLI uniquement)
+npm install
+
+# Compiler le CSS une fois
+npm run build:css
+
+# Mode watch (recompilation automatique)
+npm run watch:css
+```
+
+Un serveur HTTP est nécessaire (les ES modules ne fonctionnent pas en `file://`) :
+
+```bash
 npx serve .
-# or
+# ou
 python -m http.server 8000
 ```
 
-> ⚠️ `fetch()` won't work when opening `index.html` directly — you need an HTTP server.
-> Uploading a CSV file via the UI works without a server.
+Puis ouvre `http://localhost:8000` et charge `data/game-history.csv` pour tester.
 
-## 🎨 Stack
+---
 
-- Vanilla HTML/CSS/JS — zero build tools
-- [Chart.js 4](https://chartjs.org)
-- [PapaParse](https://papaparse.com)
-- [Google Fonts](https://fonts.google.com) — Cinzel + Crimson Pro
+## Déploiement
+
+### GitHub Pages
+Le déploiement se déclenche automatiquement à chaque push sur `main` via GitHub Actions.
+Pour un nouveau fork :
+1. **Settings → Pages** → source : **GitHub Actions**
+2. Push sur `main` — le workflow déploie automatiquement
+
+### Vercel
+Connecte le dépôt sur [vercel.com](https://vercel.com) — aucune configuration requise, le projet est entièrement statique.
