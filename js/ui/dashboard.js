@@ -5,6 +5,7 @@
  */
 
 import { inkBadge }      from '../utils/ink.js';
+import { esc }           from '../utils/html.js';
 import { TABLE_MAX_ROWS } from '../constants.js';
 
 // ── Header & KPIs ─────────────────────────────────────────────────────────
@@ -47,9 +48,9 @@ export function renderTable(games) {
       const isWin  = g.result === 'Win';
 
       return `<tr>
-        <td>${g.date.slice(5)}</td>
+        <td>${esc(g.date.slice(5))}</td>
         <td><span class="win-badge ${isWin ? 'win' : 'loss'}">${isWin ? '✓ Victoire' : '✗ Défaite'}</span></td>
-        <td>${g.opponent}</td>
+        <td>${esc(g.opponent)}</td>
         <td class="td-small">${inkBadge(g.myColors)}</td>
         <td class="td-small">${inkBadge(g.oppColors)}</td>
         <td class="td-center td-win">${g.myLore}</td>
@@ -67,6 +68,6 @@ export function renderStreak(games) {
   document.getElementById('streakRow').innerHTML =
     games.slice(-TABLE_MAX_ROWS).map(g => {
       const w = g.result === 'Win';
-      return `<div class="streak-dot ${w ? 'w' : 'l'}" title="${g.date} vs ${g.opponent}">${w ? 'V' : 'D'}</div>`;
+      return `<div class="streak-dot ${w ? 'w' : 'l'}" title="${esc(g.date)} vs ${esc(g.opponent)}">${w ? 'V' : 'D'}</div>`;
     }).join('');
 }

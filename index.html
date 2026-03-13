@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inkwell Stats — Lorcana Dashboard</title>
 
+  <!-- Favicon -->
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+
   <!-- Polices -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,9 +18,9 @@
   <!-- Styles personnalisés (animations, composants complexes, variables CSS) -->
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- Bibliothèques CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <!-- Bibliothèques vendorisées — hébergées en local (npm run build:vendor) -->
+  <script src="vendor/chart.umd.js"></script>
+  <script src="vendor/papaparse.min.js"></script>
 </head>
 <body class="bg-ink font-body text-ltext">
 
@@ -50,7 +53,7 @@
         <button class="drop-btn" id="browseBtn">Parcourir…</button>
         <div class="drop-hint">
           Fichier CSV exporté depuis
-          <a href="https://duels.ink" target="_blank" rel="noopener">duels.ink</a>
+          <a href="https://duels.ink" target="_blank" rel="noopener noreferrer">duels.ink</a>
         </div>
         <div class="drop-overlay" id="dropOverlay">
           <div class="drop-overlay-text">Lâche le fichier ✦</div>
@@ -303,7 +306,7 @@
 
       <footer class="text-center mt-14 pt-6 border-t border-lborder text-muted text-sm italic">
         Inkwell Stats · données
-        <a href="https://duels.ink" target="_blank" rel="noopener" class="text-gold no-underline hover:underline">
+        <a href="https://duels.ink" target="_blank" rel="noopener noreferrer" class="text-gold no-underline hover:underline">
           duels.ink
         </a>
         · <button class="footer-link" id="footerChangeBtn">Changer de fichier</button>
