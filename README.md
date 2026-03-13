@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="assets/logo.svg" alt="Inkwell Stats" width="96" height="96">
+</div>
+    
 # Inkwell Stats — Lorcana Dashboard
 
 > Dashboard analytique client-side pour **Disney Lorcana** — importe ton historique CSV depuis [duels.ink](https://duels.ink) et visualise tes statistiques en temps réel.
@@ -8,6 +12,7 @@
 **🌐 Démos live**
 - GitHub Pages : [gon3s.github.io/lorcana-stats](https://gon3s.github.io/lorcana-stats/)
 - Vercel : [lorcana-stats.vercel.app](https://lorcana-stats.vercel.app)
+<img src="screenshots/preview.svg" alt="Aperçu du dashboard" width="100%">
 
 ---
 
