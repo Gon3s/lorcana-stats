@@ -4,6 +4,7 @@
  */
 
 import { inkBadge } from '../utils/ink.js';
+import { esc }      from '../utils/html.js';
 
 /** @returns {{ label: string, color: string }} */
 function verdict(rate) {
@@ -42,7 +43,7 @@ function renderMatchupCard(m) {
   return `
     <div class="predictor-card">
       <div class="predictor-opp-icons">${inkBadge(m.opp, 26)}</div>
-      <div class="predictor-opp">${m.opp}</div>
+      <div class="predictor-opp">${esc(m.opp)}</div>
       <div class="predictor-rate"   style="color:${color}">${m.rate.toFixed(0)}%</div>
       <div class="predictor-verdict" style="color:${color}">${label}</div>
       <div class="predictor-record">${m.wins}V · ${m.losses}D · ${m.total} parties</div>
@@ -60,7 +61,7 @@ export function renderMatchupPredictor(games, activeDeck) {
   }
 
   const deckIcons = activeDeck !== 'all' ? inkBadge(activeDeck, 20) + ' ' : '';
-  const deckLabel = activeDeck === 'all' ? 'tous decks' : activeDeck;
+  const deckLabel = activeDeck === 'all' ? 'tous decks' : esc(activeDeck);
   container.innerHTML = `
     <div class="predictor-deck-label">
       Deck analysé : <strong>${deckIcons}${deckLabel}</strong>

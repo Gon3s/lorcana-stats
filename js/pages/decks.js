@@ -6,6 +6,7 @@
 
 import { parseCSV }    from '../parser.js';
 import { inkBadge }    from '../utils/ink.js';
+import { esc }         from '../utils/html.js';
 import { LS_KEYS }     from '../constants.js';
 
 // ── Empreinte de decklist ──────────────────────────────────────────────────
@@ -126,11 +127,11 @@ function renderDiff(diff) {
   const parts = [];
 
   if (added.length)   parts.push(added.map(c =>
-    `<span class="deck-diff-added">+${c.count}× ${c.name}</span>`).join(''));
+    `<span class="deck-diff-added">+${c.count}× ${esc(c.name)}</span>`).join(''));
   if (removed.length) parts.push(removed.map(c =>
-    `<span class="deck-diff-removed">−${c.count}× ${c.name}</span>`).join(''));
+    `<span class="deck-diff-removed">−${c.count}× ${esc(c.name)}</span>`).join(''));
   if (changed.length) parts.push(changed.map(c =>
-    `<span class="deck-diff-changed">${c.before}×→${c.after}× ${c.name}</span>`).join(''));
+    `<span class="deck-diff-changed">${c.before}×→${c.after}× ${esc(c.name)}</span>`).join(''));
 
   return `
     <div class="deck-diff">
@@ -162,7 +163,7 @@ function renderDeckCard(deck) {
     ? cards.map(c => `
         <div class="deck-card-row">
           <span class="deck-card-count">${c.count}×</span>
-          <span class="deck-card-name">${c.name}</span>
+          <span class="deck-card-name">${esc(c.name)}</span>
         </div>`).join('')
     : '<p class="empty-msg" style="padding:6px 0;font-size:13px">Decklist non disponible dans le CSV</p>';
 
@@ -172,7 +173,7 @@ function renderDeckCard(deck) {
         <div class="deck-profile-icons">${inkBadge(deck.colors, 52)}</div>
         <div class="deck-profile-meta">
           <div class="deck-profile-name">
-            ${deck.colors}
+            ${esc(deck.colors)}
             ${versionBadge}
           </div>
           <div class="deck-profile-stats">
@@ -182,7 +183,7 @@ function renderDeckCard(deck) {
             <span class="deck-stat-pill" style="color:${mmrColor}">${mmrSign}${deck.avgDelta.toFixed(1)} MMR/partie</span>
           </div>
           <div class="deck-profile-dates">
-            ${deck.firstPlayed} → ${deck.lastPlayed}
+            ${esc(deck.firstPlayed)} → ${esc(deck.lastPlayed)}
           </div>
         </div>
       </div>
@@ -229,6 +230,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     content.innerHTML = decks.map(renderDeckCard).join('');
   } catch (e) {
-    content.innerHTML = `<p class="empty-msg">Erreur de lecture : ${e.message}</p>`;
+    const p = document.createElement('p');
+    p.className   = 'empty-msg';
+    p.textContent = `Erreur de lecture : ${e.message}`;
+    content.replaceChildren(p);
   }
 });

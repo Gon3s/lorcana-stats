@@ -6,6 +6,7 @@
 
 import { winStats, groupBy }  from '../charts/registry.js';
 import { inkBadge }           from '../utils/ink.js';
+import { esc }                from '../utils/html.js';
 import { MIN_MATCHUP_GAMES }  from '../constants.js';
 
 // ── Section 1 : winrate par combinaison jouée ──────────────────────────────
@@ -28,7 +29,7 @@ export function renderInkWinrates(games, containerId) {
         <div class="ink-stat-icon">${inkBadge(s.combo, 32)}</div>
         <div class="ink-stat-body">
           <div class="ink-stat-header">
-            <span class="ink-stat-name">${s.combo}</span>
+            <span class="ink-stat-name">${esc(s.combo)}</span>
             <span class="ink-stat-pct" style="color:${barColor}">${s.rate.toFixed(1)}%</span>
             <span class="ink-stat-games">${s.wins}V / ${s.total - s.wins}D (${s.total})</span>
           </div>
@@ -82,7 +83,7 @@ export function renderMatchupMatrix(games, containerId) {
 
   // En-têtes de colonnes (combos adverses)
   const colHeader = oppCols.map(combo =>
-    `<th class="matrix-head" title="${combo}">
+    `<th class="matrix-head" title="${esc(combo)}">
        <div class="matrix-combo-head">${inkBadge(combo, 22)}</div>
      </th>`
   ).join('');
@@ -108,12 +109,12 @@ export function renderMatchupMatrix(games, containerId) {
       const textColor = rate >= 50 ? '#4ecca3' : '#e85d7a';
       return `<td class="matrix-cell"
         style="background:${bg};color:${textColor}"
-        title="${myCombo} vs ${oppCombo} : ${rate.toFixed(1)}% (${m.total} partie${m.total > 1 ? 's' : ''})"
+        title="${esc(myCombo)} vs ${esc(oppCombo)} : ${rate.toFixed(1)}% (${m.total} partie${m.total > 1 ? 's' : ''})"
       >${rate.toFixed(0)}%</td>`;
     }).join('');
 
     return `<tr>
-      <th class="matrix-row-head" title="${myCombo}">
+      <th class="matrix-row-head" title="${esc(myCombo)}">
         <div class="matrix-combo-head">${inkBadge(myCombo, 22)}</div>
       </th>
       ${cells}

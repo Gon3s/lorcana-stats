@@ -16,8 +16,10 @@
   <link rel="stylesheet" href="css/tailwind.css">
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- PapaParse (utilisé par parser.js) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <!-- PapaParse — integrity (SRI) + crossorigin pour sécuriser le chargement -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"
+          integrity="sha512-dfX5uYVXzyU8+KHqj8bjo7UkOdg18PaOtpa48djpNbZHwExddghZ+ZmzWT06R5v6NSk3ZUfsH6FNEDepLx9hPQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body class="bg-ink font-body text-ltext">
 
@@ -47,7 +49,7 @@
 
     <footer class="text-center mt-14 pt-6 border-t border-lborder text-muted text-sm italic">
       Inkwell Stats · données
-      <a href="https://duels.ink" target="_blank" rel="noopener" class="text-gold no-underline hover:underline">
+      <a href="https://duels.ink" target="_blank" rel="noopener noreferrer" class="text-gold no-underline hover:underline">
         duels.ink
       </a>
       · <a href="index.html" class="footer-link">Retour au dashboard</a>
