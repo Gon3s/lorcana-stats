@@ -100,13 +100,6 @@ function onRerender() {
 
 // ── Callbacks ──────────────────────────────────────────────────────────────
 
-/** Calcule la date "il y a N jours" au format YYYY-MM-DD */
-function daysAgo(n) {
-  const d = new Date();
-  d.setDate(d.getDate() - n);
-  return d.toISOString().slice(0, 10);
-}
-
 function onCSV(csvText) {
   try {
     // B4 : parseCSV retourne { games, warnings }
@@ -114,14 +107,10 @@ function onCSV(csvText) {
     store.setGames(games);
     showDashboard();
 
-    // Filtre date par défaut : 15 derniers jours
-    const dateDefault = daysAgo(15);
-    store.setDateRange(dateDefault, null);
-
     const allGames = store.allGames;
     buildDeckSelect(allGames, store.setActiveDeck.bind(store), store.setActiveVersionKeys.bind(store), onRerender);
     buildQueueFilter(allGames, store.setActiveQueue.bind(store), onRerender);
-    buildDateFilter(store.setDateRange.bind(store), onRerender, dateDefault);
+    buildDateFilter(store.setDateRange.bind(store), onRerender);
 
     // Filtres queue locaux aux sections MMR et Momentum
     const queues = [...new Set(allGames.map(g => g.queue).filter(Boolean))].sort();

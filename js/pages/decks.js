@@ -159,14 +159,6 @@ function renderAllDecks() {
     : '<p class="empty-msg" style="padding:48px 0;font-size:16px">Aucune partie pour cette période.</p>';
 }
 
-// ── Utilitaire date ────────────────────────────────────────────────────────
-
-function daysAgo(n) {
-  const d = new Date();
-  d.setDate(d.getDate() - n);
-  return d.toISOString().slice(0, 10);
-}
-
 // ── Initialisation ─────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -190,12 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const { games } = parseCSV(csv);
     store.setGames(games);
 
-    // Filtre date par défaut : 15 derniers jours
-    const dateDefault = daysAgo(15);
-    store.setDateRange(dateDefault, null);
-
     buildQueueFilter(store.allGames, store.setActiveQueue.bind(store), renderAllDecks);
-    buildDateFilter(store.setDateRange.bind(store), renderAllDecks, dateDefault);
+    buildDateFilter(store.setDateRange.bind(store), renderAllDecks);
 
     renderAllDecks();
   } catch (e) {
