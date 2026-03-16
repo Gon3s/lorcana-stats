@@ -31,7 +31,7 @@ export function renderInkWinrates(games, containerId) {
           <div class="ink-stat-header">
             <span class="ink-stat-name">${esc(s.combo)}</span>
             <span class="ink-stat-pct" style="color:${barColor}">${s.rate.toFixed(1)}%</span>
-            <span class="ink-stat-games">${s.wins}V / ${s.total - s.wins}D (${s.total})</span>
+            <span class="ink-stat-games">${s.wins}V / ${s.losses}D (${s.total})</span>
           </div>
           <div class="ink-bar-track">
             <div class="ink-bar-fill" style="width:${s.rate.toFixed(1)}%;background:${barColor}"></div>

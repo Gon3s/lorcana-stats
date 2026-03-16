@@ -91,7 +91,7 @@ export function parseCSV(csvText) {
       decklist,
     };
   }).filter(g => {
-    if (!g.result || !g.myColors) return false;
+    if ((g.result !== 'Win' && g.result !== 'Loss') || !g.myColors) return false;
     // Exclure les parties sans données MMR (mmrBefore et mmrAfter tous deux à 0)
     if (g.mmrBefore === 0 && g.mmrAfter === 0) return false;
     // B1 : élimination des doublons

@@ -19,11 +19,11 @@ function getISOWeek(dateStr) {
 
 function weekStats(games) {
   if (!games.length) return null;
-  const wins  = games.filter(g => g.result === 'Win').length;
-  const total = games.length;
+  const wins   = games.filter(g => g.result === 'Win').length;
+  const losses = games.filter(g => g.result === 'Loss').length;
+  const total  = games.length;
   return {
-    total, wins,
-    losses:   total - wins,
+    total, wins, losses,
     rate:     wins / total * 100,
     mmrDelta: games[total - 1].mmrAfter - games[0].mmrBefore,
     avgDur:   games.reduce((s, g) => s + g.duration, 0) / total,
@@ -94,8 +94,9 @@ export function renderBestWorstDeck(allGames) {
 
   const stats = Object.entries(byDeck)
     .map(([deck, gs]) => {
-      const wins = gs.filter(g => g.result === 'Win').length;
-      return { deck, total: gs.length, wins, rate: wins / gs.length * 100 };
+      const wins   = gs.filter(g => g.result === 'Win').length;
+      const losses = gs.filter(g => g.result === 'Loss').length;
+      return { deck, total: gs.length, wins, losses, rate: wins / gs.length * 100 };
     })
     .filter(s => s.total >= 2)
     .sort((a, b) => b.rate - a.rate);
@@ -122,7 +123,7 @@ export function renderBestWorstDeck(allGames) {
           <div class="bw-bar" style="width:${s.rate.toFixed(0)}%;background:${color}"></div>
         </div>
         <span class="bw-rate"   style="color:${color}">${s.rate.toFixed(0)}%</span>
-        <span class="bw-record">${s.wins}V/${s.total - s.wins}D</span>
+        <span class="bw-record">${s.wins}V/${s.losses}D</span>
       </div>`;
   }).join('');
 }
