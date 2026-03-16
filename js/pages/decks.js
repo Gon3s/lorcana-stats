@@ -4,10 +4,14 @@
  * Gère la détection de versions distinctes quand la composition change.
  */
 
-import { parseCSV }    from '../parser.js';
-import { inkBadge }    from '../utils/ink.js';
-import { esc }         from '../utils/html.js';
-import { LS_KEYS }     from '../constants.js';
+import { parseCSV }                                         from '../parser.js';
+import { store }                                            from '../store.js';
+import { buildDecks }                                       from '../utils/deck-builder.js';
+import { buildQueueFilter, buildDateFilter,
+         updateFilterCount }                                from '../ui/filter.js';
+import { inkBadge }                                         from '../utils/ink.js';
+import { esc }                                              from '../utils/html.js';
+import { LS_KEYS }                                          from '../constants.js';
 
 // ── Empreinte de decklist ──────────────────────────────────────────────────
 
