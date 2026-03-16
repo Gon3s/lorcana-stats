@@ -32,6 +32,15 @@ function clamp(v, min, max) {
 }
 
 /**
+ * Parse une valeur MMR : retourne null si manquante ou invalide,
+ * sinon la valeur bornée entre 0 et 9999.
+ */
+function parseMMR(str) {
+  const v = parseInt(str);
+  return isNaN(v) ? null : clamp(v, 0, 9999);
+}
+
+/**
  * Parse le CSV brut en tableau de Game objects + avertissements.
  * @param {string} csvText
  * @returns {{ games: Game[], warnings: string[] }}
@@ -83,8 +92,8 @@ export function parseCSV(csvText) {
       turnOrder:   (row['Turn Order']     || '').trim(),
       myColors:    (row['My Colors']      || '').trim(),
       oppColors:   (row['Opponent Colors']|| '').trim(),
-      mmrBefore:   clamp(parseInt(row['MMR Before']) || 0, 0, 9999),
-      mmrAfter:    clamp(parseInt(row['MMR After'])  || 0, 0, 9999),
+      mmrBefore:   parseMMR(row['MMR Before']),
+      mmrAfter:    parseMMR(row['MMR After']),
       matchFormat: (row['Match Format']   || '').trim(),
       // F5 : extraction de la file de jeu
       queue:       (row['Queue']          || '').trim(),
@@ -92,8 +101,6 @@ export function parseCSV(csvText) {
     };
   }).filter(g => {
     if ((g.result !== 'Win' && g.result !== 'Loss') || !g.myColors) return false;
-    // Exclure les parties sans données MMR (mmrBefore et mmrAfter tous deux à 0)
-    if (g.mmrBefore === 0 && g.mmrAfter === 0) return false;
     // B1 : élimination des doublons
     const key = `${g.startedAt}|${g.opponent}|${g.result}`;
     if (seen.has(key)) return false;
