@@ -17,7 +17,8 @@ export function renderWinLossDonut(games) {
   const total  = games.length;
   const wr     = (wins.length / total * 100).toFixed(1);
   const avgDur  = avg(games.map(g => g.duration)).toFixed(1);
-  const peakMMR = Math.max(...games.map(g => g.mmrAfter));
+  const mmrValues = games.map(g => g.mmrAfter).filter(v => v !== null);
+  const peakMMR = mmrValues.length ? Math.max(...mmrValues) : null;
 
   registerChart('wl', new Chart(document.getElementById('winLossChart'), {
     type: 'doughnut',
@@ -55,7 +56,7 @@ export function renderWinLossDonut(games) {
     <div class="legend-sep"></div>
     <div class="legend-item">
       <span class="legend-label" style="color:var(--muted)">Peak MMR</span>
-      <span class="legend-value" style="color:var(--gold-light)">${peakMMR}</span>
+      <span class="legend-value" style="color:var(--gold-light)">${peakMMR !== null ? peakMMR : '—'}</span>
     </div>
     <div class="legend-item">
       <span class="legend-label" style="color:var(--muted)">Durée moy.</span>

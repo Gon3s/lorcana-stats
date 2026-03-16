@@ -58,7 +58,10 @@ export function buildDecks(games) {
       const wins     = v.games.filter(g => g.result === 'Win').length;
       const losses   = v.games.filter(g => g.result === 'Loss').length;
       const total    = v.games.length;
-      const avgDelta = v.games.reduce((s, g) => s + (g.mmrAfter - g.mmrBefore), 0) / total;
+      const mmrGames = v.games.filter(g => g.mmrAfter !== null && g.mmrBefore !== null);
+      const avgDelta = mmrGames.length
+        ? mmrGames.reduce((s, g) => s + (g.mmrAfter - g.mmrBefore), 0) / mmrGames.length
+        : 0;
       const dates    = v.games.map(g => g.date).sort();
 
       allDecks.push({

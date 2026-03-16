@@ -25,7 +25,7 @@ function weekStats(games) {
   return {
     total, wins, losses,
     rate:     wins / total * 100,
-    mmrDelta: games[total - 1].mmrAfter - games[0].mmrBefore,
+    mmrDelta: (games[total - 1].mmrAfter ?? 0) - (games[0].mmrBefore ?? 0),
     avgDur:   games.reduce((s, g) => s + g.duration, 0) / total,
   };
 }

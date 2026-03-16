@@ -7,6 +7,11 @@ import { destroyChart, registerChart, GRID } from './registry.js';
 export function renderMMRChart(games) {
   destroyChart('mmr');
 
+  // Exclure les parties sans données MMR pour ce graphique uniquement
+  const mmrGames = games.filter(g => g.mmrBefore !== null && g.mmrAfter !== null);
+  if (!mmrGames.length) return;
+  games = mmrGames;
+
   registerChart('mmr', new Chart(document.getElementById('mmrChart'), {
     type: 'line',
     data: {

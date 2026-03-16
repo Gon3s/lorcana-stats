@@ -14,7 +14,8 @@ export function updateHeader(games) {
   const wins     = games.filter(g => g.result === 'Win');
   const losses   = games.filter(g => g.result === 'Loss');
   const total    = games.length;
-  const endMMR   = games[total - 1].mmrAfter;
+  const mmrGames = games.filter(g => g.mmrAfter !== null);
+  const endMMR   = mmrGames.length ? mmrGames[mmrGames.length - 1].mmrAfter : null;
   const avgDur   = (games.reduce((s, g) => s + g.duration, 0) / total).toFixed(1);
   const dates    = games.map(g => g.date).sort();
 
@@ -22,7 +23,7 @@ export function updateHeader(games) {
   document.getElementById('kpiWins')   .textContent = wins.length;
   document.getElementById('kpiLosses') .textContent = losses.length;
   document.getElementById('kpiWinRate').textContent = (wins.length / total * 100).toFixed(1) + '%';
-  document.getElementById('kpiMMR')    .textContent = endMMR;
+  document.getElementById('kpiMMR')    .textContent = endMMR !== null ? endMMR : '—';
   document.getElementById('kpiDur')    .textContent = avgDur + 'm';
 
   document.getElementById('headerMeta').textContent =
@@ -32,10 +33,11 @@ export function updateHeader(games) {
 /** Met à jour le badge MMR (Départ → Peak → Actuel) selon les parties passées */
 export function updateMMRBadge(games) {
   if (!games.length) return;
-  const total    = games.length;
-  const startMMR = games[0].mmrBefore;
-  const endMMR   = games[total - 1].mmrAfter;
-  const peakMMR  = Math.max(...games.map(g => g.mmrAfter));
+  const mmrGames = games.filter(g => g.mmrBefore !== null && g.mmrAfter !== null);
+  if (!mmrGames.length) return;
+  const startMMR = mmrGames[0].mmrBefore;
+  const endMMR   = mmrGames[mmrGames.length - 1].mmrAfter;
+  const peakMMR  = Math.max(...mmrGames.map(g => g.mmrAfter));
   const mmrGain  = endMMR - startMMR;
   document.getElementById('mmrBadge').innerHTML =
     `✦ Départ: ${startMMR} &nbsp;→&nbsp; Peak: ${peakMMR} &nbsp;→&nbsp; Actuel: ${endMMR}` +
@@ -51,7 +53,7 @@ function mmrDeltaClass(delta) {
 export function renderTable(games) {
   document.getElementById('tableBody').innerHTML =
     [...games].reverse().slice(0, TABLE_MAX_ROWS).map(g => {
-      const delta  = g.mmrAfter - g.mmrBefore;
+      const delta  = (g.mmrAfter !== null && g.mmrBefore !== null) ? g.mmrAfter - g.mmrBefore : null;
       const isWin  = g.result === 'Win';
 
       return `<tr>
@@ -64,7 +66,7 @@ export function renderTable(games) {
         <td class="td-center">${g.oppLore}</td>
         <td class="td-center">${g.turns}</td>
         <td class="td-center">${g.duration}m</td>
-        <td class="td-right ${mmrDeltaClass(delta)} td-cinzel">${delta >= 0 ? '+' : ''}${delta}</td>
+        <td class="td-right ${delta !== null ? mmrDeltaClass(delta) : ''} td-cinzel">${delta !== null ? `${delta >= 0 ? '+' : ''}${delta}` : '—'}</td>
       </tr>`;
     }).join('');
 }
