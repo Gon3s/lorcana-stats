@@ -21,12 +21,13 @@ function buildMatchups(games) {
 
   return Object.entries(groups)
     .map(([opp, gs]) => {
-      const wins = gs.filter(g => g.result === 'Win').length;
+      const wins   = gs.filter(g => g.result === 'Win').length;
+      const losses = gs.filter(g => g.result === 'Loss').length;
       return {
         opp,
-        total:  gs.length,
+        total: gs.length,
         wins,
-        losses: gs.length - wins,
+        losses,
         rate:   wins / gs.length * 100,
         last5:  gs.slice(-5).map(g => g.result === 'Win' ? '✓' : '✗'),
       };

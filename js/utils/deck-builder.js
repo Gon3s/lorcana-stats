@@ -56,6 +56,7 @@ export function buildDecks(games) {
 
     versions.forEach((v, idx) => {
       const wins     = v.games.filter(g => g.result === 'Win').length;
+      const losses   = v.games.filter(g => g.result === 'Loss').length;
       const total    = v.games.length;
       const avgDelta = v.games.reduce((s, g) => s + (g.mmrAfter - g.mmrBefore), 0) / total;
       const dates    = v.games.map(g => g.date).sort();
@@ -67,7 +68,7 @@ export function buildDecks(games) {
         // Decklist de la version précédente — pour le diff dans la page Mes Decks
         prevDecklist:  idx > 0 ? versions[idx - 1].decklist : null,
         total, wins,
-        losses:        total - wins,
+        losses,
         rate:          wins / total * 100,
         avgDelta,
         firstPlayed:   dates[0],

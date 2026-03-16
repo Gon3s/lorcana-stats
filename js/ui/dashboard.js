@@ -12,6 +12,7 @@ import { TABLE_MAX_ROWS } from '../constants.js';
 
 export function updateHeader(games) {
   const wins     = games.filter(g => g.result === 'Win');
+  const losses   = games.filter(g => g.result === 'Loss');
   const total    = games.length;
   const endMMR   = games[total - 1].mmrAfter;
   const avgDur   = (games.reduce((s, g) => s + g.duration, 0) / total).toFixed(1);
@@ -19,7 +20,7 @@ export function updateHeader(games) {
 
   document.getElementById('kpiTotal')  .textContent = total;
   document.getElementById('kpiWins')   .textContent = wins.length;
-  document.getElementById('kpiLosses') .textContent = total - wins.length;
+  document.getElementById('kpiLosses') .textContent = losses.length;
   document.getElementById('kpiWinRate').textContent = (wins.length / total * 100).toFixed(1) + '%';
   document.getElementById('kpiMMR')    .textContent = endMMR;
   document.getElementById('kpiDur')    .textContent = avgDur + 'm';

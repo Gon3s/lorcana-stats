@@ -39,7 +39,8 @@ export const groupBy = (arr, key) =>
 /** Statistiques victoires/défaites */
 export const winStats = gs => {
   const w = gs.filter(g => g.result === 'Win').length;
-  return { wins: w, total: gs.length, rate: gs.length ? w / gs.length * 100 : 0 };
+  const l = gs.filter(g => g.result === 'Loss').length;
+  return { wins: w, losses: l, total: gs.length, rate: gs.length ? w / gs.length * 100 : 0 };
 };
 
 /** Moyenne d'un tableau de nombres */

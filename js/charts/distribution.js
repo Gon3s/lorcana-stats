@@ -12,9 +12,10 @@ import { esc }      from '../utils/html.js';
 export function renderWinLossDonut(games) {
   destroyChart('wl');
 
-  const wins    = games.filter(g => g.result === 'Win');
-  const total   = games.length;
-  const wr      = (wins.length / total * 100).toFixed(1);
+  const wins   = games.filter(g => g.result === 'Win');
+  const losses = games.filter(g => g.result === 'Loss');
+  const total  = games.length;
+  const wr     = (wins.length / total * 100).toFixed(1);
   const avgDur  = avg(games.map(g => g.duration)).toFixed(1);
   const peakMMR = Math.max(...games.map(g => g.mmrAfter));
 
@@ -23,7 +24,7 @@ export function renderWinLossDonut(games) {
     data: {
       labels:   ['Victoires', 'Défaites'],
       datasets: [{
-        data:            [wins.length, total - wins.length],
+        data:            [wins.length, losses.length],
         backgroundColor: ['rgba(78,204,163,.85)', 'rgba(232,93,122,.85)'],
         borderColor:     ['rgba(78,204,163,.3)',  'rgba(232,93,122,.3)'],
         borderWidth:     2,
@@ -49,7 +50,7 @@ export function renderWinLossDonut(games) {
     <div class="legend-item">
       <div class="legend-dot" style="background:var(--loss)"></div>
       <span class="legend-label">Défaites</span>
-      <span class="legend-value">${total - wins.length}<span class="legend-pct">${(100 - parseFloat(wr)).toFixed(1)}%</span></span>
+      <span class="legend-value">${losses.length}<span class="legend-pct">${(losses.length / total * 100).toFixed(1)}%</span></span>
     </div>
     <div class="legend-sep"></div>
     <div class="legend-item">
