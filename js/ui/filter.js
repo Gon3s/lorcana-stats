@@ -250,8 +250,22 @@ export function buildDateFilter(setDateRange, onRerender, initialStart = null) {
     onRerender();
   };
 
+  // Supprimer les anciens listeners en cas de rechargement de CSV
+  if (startEl._applyListener) {
+    startEl.removeEventListener('change', startEl._applyListener);
+    startEl.removeEventListener('input',  startEl._applyListener);
+    endEl.removeEventListener('change',   endEl._applyListener);
+    endEl.removeEventListener('input',    endEl._applyListener);
+  }
+  startEl._applyListener = apply;
+  endEl._applyListener   = apply;
+
+  // Écouter 'input' en plus de 'change' — certains navigateurs ne déclenchent
+  // 'change' que sur blur, alors qu'il faut réagir dès la sélection dans le picker
   startEl.addEventListener('change', apply);
-  endEl.addEventListener('change', apply);
+  startEl.addEventListener('input',  apply);
+  endEl.addEventListener('change',   apply);
+  endEl.addEventListener('input',    apply);
 
   if (resetEl) {
     resetEl.addEventListener('click', () => {
