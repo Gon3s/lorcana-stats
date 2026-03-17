@@ -12,7 +12,8 @@ import { showDashboard, showUploadScreen }                           from './ui/
 import { initUploadScreen, checkSavedData, showUploadError }         from './ui/upload.js';
 import { buildDeckSelect, buildQueueFilter,
          buildDateFilter, updateFilterCount,
-         buildSectionQueueFilter }                                   from './ui/filter.js';
+         buildSectionQueueFilter,
+         buildTurnOrderFilter }                                      from './ui/filter.js';
 import { updateHeader, updateMMRBadge,
          renderTable, renderStreak }                                 from './ui/dashboard.js';
 
@@ -110,6 +111,7 @@ function onCSV(csvText) {
     const allGames = store.allGames;
     buildDeckSelect(allGames, store.setActiveDeck.bind(store), store.setActiveVersionKeys.bind(store), onRerender);
     buildQueueFilter(allGames, store.setActiveQueue.bind(store), onRerender);
+    buildTurnOrderFilter(store.setActiveTurnOrder.bind(store), onRerender);
     buildDateFilter(store.setDateRange.bind(store), onRerender);
 
     // Filtres queue locaux aux sections MMR et Momentum
