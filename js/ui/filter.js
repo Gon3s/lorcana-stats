@@ -224,6 +224,31 @@ export function buildSectionQueueFilter(pillsId, sectionId, queues, onPick) {
   addKeyboardNav(pillsEl);
 }
 
+// ── Filtre ordre de jeu (OTP / OTD) ──────────────────────────────────────────
+
+/**
+ * @param {function(string)} setTurnOrder — store.setActiveTurnOrder
+ * @param {function()}       onRerender
+ */
+export function buildTurnOrderFilter(setTurnOrder, onRerender) {
+  const pillsEl = document.getElementById('filterTurnOrder');
+  if (!pillsEl) return;
+  pillsEl.innerHTML = '';
+  pillsEl.setAttribute('role', 'tablist');
+  pillsEl.setAttribute('aria-label', "Filtre par ordre de jeu");
+
+  const onPick = (value, container) => {
+    activatePill(container, value);
+    setTurnOrder(value);
+    onRerender();
+  };
+
+  pillsEl.appendChild(createPill('Tout',  'all', true,  onPick));
+  pillsEl.appendChild(createPill('OTP',   'OTP', false, onPick));
+  pillsEl.appendChild(createPill('OTD',   'OTD', false, onPick));
+  addKeyboardNav(pillsEl);
+}
+
 // ── Filtre période ────────────────────────────────────────────────────────────
 
 /**
