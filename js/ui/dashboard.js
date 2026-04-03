@@ -30,7 +30,7 @@ export function updateHeader(games) {
     `${dates[0]} → ${dates[dates.length - 1]}  ·  ${total} parties`;
 }
 
-/** Met à jour le badge MMR (Départ → Peak → Actuel) selon les parties passées */
+/** Met à jour le badge MMR (Départ → Pic MMR → Actuel) selon les parties passées */
 export function updateMMRBadge(games) {
   if (!games.length) return;
   const mmrGames = games.filter(g => g.mmrBefore !== null && g.mmrAfter !== null);
@@ -40,38 +40,79 @@ export function updateMMRBadge(games) {
   const peakMMR  = Math.max(...mmrGames.map(g => g.mmrAfter));
   const mmrGain  = endMMR - startMMR;
   document.getElementById('mmrBadge').innerHTML =
-    `✦ Départ: ${startMMR} &nbsp;→&nbsp; Peak: ${peakMMR} &nbsp;→&nbsp; Actuel: ${endMMR}` +
+    `✦ Départ: ${startMMR} &nbsp;→&nbsp; Pic MMR: ${peakMMR} &nbsp;→&nbsp; Actuel: ${endMMR}` +
     ` &nbsp;(${mmrGain >= 0 ? '+' : ''}${mmrGain} pts)`;
 }
 
-// ── Tableau des 20 dernières parties ──────────────────────────────────────
+// ── Tableau des parties (toutes, paginées) ────────────────────────────────
+
+let _tablePage  = 0;
+let _tableGames = [];
 
 function mmrDeltaClass(delta) {
   return delta >= 0 ? 'text-win' : 'text-loss';
 }
 
-export function renderTable(games) {
-  document.getElementById('tableBody').innerHTML =
-    [...games].reverse().slice(0, TABLE_MAX_ROWS).map(g => {
-      const delta  = (g.mmrAfter !== null && g.mmrBefore !== null) ? g.mmrAfter - g.mmrBefore : null;
-      const isWin  = g.result === 'Win';
+function _renderTablePage() {
+  const total      = _tableGames.length;
+  const pageSize   = TABLE_MAX_ROWS;
+  const totalPages = Math.ceil(total / pageSize);
+  const start      = _tablePage * pageSize;
+  const slice      = _tableGames.slice(start, start + pageSize);
 
-      return `<tr>
-        <td>${esc(g.date.slice(5))}</td>
-        <td><span class="win-badge ${isWin ? 'win' : 'loss'}">${isWin ? '✓ Victoire' : '✗ Défaite'}</span></td>
-        <td>${esc(g.opponent)}</td>
-        <td class="td-small">${inkBadge(g.myColors)}</td>
-        <td class="td-small">${inkBadge(g.oppColors)}</td>
-        <td class="td-center td-win">${g.myLore}</td>
-        <td class="td-center">${g.oppLore}</td>
-        <td class="td-center">${g.turns}</td>
-        <td class="td-center">${g.duration}m</td>
-        <td class="td-right ${delta !== null ? mmrDeltaClass(delta) : ''} td-cinzel">${delta !== null ? `${delta >= 0 ? '+' : ''}${delta}` : '—'}</td>
-      </tr>`;
-    }).join('');
+  document.getElementById('tableBody').innerHTML = slice.map(g => {
+    const delta  = (g.mmrAfter !== null && g.mmrBefore !== null) ? g.mmrAfter - g.mmrBefore : null;
+    const isWin  = g.result === 'Win';
+
+    return `<tr>
+      <td>${esc(g.date.slice(5))}</td>
+      <td><span class="win-badge ${isWin ? 'win' : 'loss'}">${isWin ? '✓ Victoire' : '✗ Défaite'}</span></td>
+      <td>${esc(g.opponent)}</td>
+      <td class="td-small">${inkBadge(g.myColors)}</td>
+      <td class="td-small">${inkBadge(g.oppColors)}</td>
+      <td class="td-center td-win">${g.myLore}</td>
+      <td class="td-center">${g.oppLore}</td>
+      <td class="td-center">${g.turns}</td>
+      <td class="td-center">${g.duration}m</td>
+      <td class="td-right ${delta !== null ? mmrDeltaClass(delta) : ''} td-cinzel">${delta !== null ? `${delta >= 0 ? '+' : ''}${delta}` : '—'}</td>
+    </tr>`;
+  }).join('');
+
+  // Pagination controls
+  const paginationEl = document.getElementById('tablePagination');
+  if (!paginationEl) return;
+  if (totalPages <= 1) {
+    paginationEl.hidden = true;
+    return;
+  }
+  paginationEl.hidden = false;
+  document.getElementById('tablePageInfo').textContent = `Page ${_tablePage + 1} / ${totalPages}`;
+  const prevBtn = document.getElementById('tablePrevBtn');
+  const nextBtn = document.getElementById('tableNextBtn');
+  if (prevBtn) prevBtn.disabled = _tablePage === 0;
+  if (nextBtn) nextBtn.disabled = _tablePage >= totalPages - 1;
 }
 
-// ── Série des 20 dernières parties ────────────────────────────────────────
+export function renderTable(games) {
+  _tablePage  = 0;
+  _tableGames = [...games].reverse();
+  _renderTablePage();
+}
+
+/** Initialise les boutons de pagination — à appeler une seule fois au démarrage */
+export function initTablePagination() {
+  const prevBtn = document.getElementById('tablePrevBtn');
+  const nextBtn = document.getElementById('tableNextBtn');
+  if (prevBtn) prevBtn.addEventListener('click', () => {
+    if (_tablePage > 0) { _tablePage--; _renderTablePage(); }
+  });
+  if (nextBtn) nextBtn.addEventListener('click', () => {
+    const totalPages = Math.ceil(_tableGames.length / TABLE_MAX_ROWS);
+    if (_tablePage < totalPages - 1) { _tablePage++; _renderTablePage(); }
+  });
+}
+
+// ── Série des dernières parties ───────────────────────────────────────────
 
 export function renderStreak(games) {
   document.getElementById('streakRow').innerHTML =

@@ -1,6 +1,5 @@
 /**
  * inkstats.js — Statistiques par encre Lorcana
- * - Winrate par combinaison de couleurs jouée (bicolorité)
  * - Matrice de matchups combinaison vs combinaison adversaire
  */
 
@@ -9,39 +8,7 @@ import { inkBadge }           from '../utils/ink.js';
 import { esc }                from '../utils/html.js';
 import { MIN_MATCHUP_GAMES }  from '../constants.js';
 
-// ── Section 1 : winrate par combinaison jouée ──────────────────────────────
-
-export function renderInkWinrates(games, containerId) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-
-  const byCombo = groupBy(games, 'myColors');
-
-  const stats = Object.entries(byCombo)
-    .map(([combo, gs]) => ({ combo, ...winStats(gs) }))
-    .filter(s => s.total >= MIN_MATCHUP_GAMES)
-    .sort((a, b) => b.rate - a.rate);
-
-  container.innerHTML = stats.map(s => {
-    const barColor = s.rate >= 50 ? '#4ecca3' : '#e85d7a';
-    return `
-      <div class="ink-stat-row">
-        <div class="ink-stat-icon">${inkBadge(s.combo, 32)}</div>
-        <div class="ink-stat-body">
-          <div class="ink-stat-header">
-            <span class="ink-stat-name">${esc(s.combo)}</span>
-            <span class="ink-stat-pct" style="color:${barColor}">${s.rate.toFixed(1)}%</span>
-            <span class="ink-stat-games">${s.wins}V / ${s.losses}D (${s.total})</span>
-          </div>
-          <div class="ink-bar-track">
-            <div class="ink-bar-fill" style="width:${s.rate.toFixed(1)}%;background:${barColor}"></div>
-          </div>
-        </div>
-      </div>`;
-  }).join('');
-}
-
-// ── Section 2 : matrice combinaison vs combinaison (P2 : cache) ────────────
+// ── Matrice de matchups combinaison vs combinaison (P2 : cache) ────────────
 
 let _matrixGamesRef  = null;
 let _matrixDataCache = null;
@@ -50,7 +17,7 @@ let _matrixColsCache = null;
 
 /**
  * Précalcule les cellules de la matrice myColors × oppColors.
- * @returns {Object} map : "myCombo|oppCombo" → { rate, total }
+ * @returns {Object} map : "myCombo|oppCombo" → { rate, total, wins, losses }
  */
 function buildMatrixData(myRows, oppCols, games) {
   const cache = {};
@@ -59,7 +26,7 @@ function buildMatrixData(myRows, oppCols, games) {
       const gs = games.filter(g => g.myColors === myCombo && g.oppColors === oppCombo);
       if (!gs.length) continue;
       const s = winStats(gs);
-      cache[`${myCombo}|${oppCombo}`] = { rate: s.rate, total: gs.length };
+      cache[`${myCombo}|${oppCombo}`] = { rate: s.rate, total: gs.length, wins: s.wins, losses: s.losses };
     }
   }
   return cache;
@@ -78,8 +45,21 @@ export function renderMatchupMatrix(games, containerId) {
     _matrixDataCache = buildMatrixData(_matrixRowsCache, _matrixColsCache, games);
   }
 
-  const myRows  = _matrixRowsCache;
   const oppCols = _matrixColsCache;
+
+  // Filtrer les lignes sans aucune donnée réelle (toutes les cellules = ? ou —)
+  const myRows = _matrixRowsCache.filter(myCombo =>
+    oppCols.some(oppCombo => {
+      if (myCombo === oppCombo) return false;
+      const m = _matrixDataCache[`${myCombo}|${oppCombo}`];
+      return m && m.total >= MIN_MATCHUP_GAMES;
+    })
+  );
+
+  if (!myRows.length) {
+    container.innerHTML = '<p class="empty-msg">Pas assez de données.</p>';
+    return;
+  }
 
   // En-têtes de colonnes (combos adverses)
   const colHeader = oppCols.map(combo =>
@@ -110,7 +90,7 @@ export function renderMatchupMatrix(games, containerId) {
       return `<td class="matrix-cell"
         style="background:${bg};color:${textColor}"
         title="${esc(myCombo)} vs ${esc(oppCombo)} : ${rate.toFixed(1)}% (${m.total} partie${m.total > 1 ? 's' : ''})"
-      >${rate.toFixed(0)}%</td>`;
+      >${rate.toFixed(0)}%<div class="matrix-vd">${m.wins}V/${m.losses}D</div></td>`;
     }).join('');
 
     return `<tr>

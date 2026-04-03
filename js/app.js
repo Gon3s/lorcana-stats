@@ -11,22 +11,23 @@ import { parseCSV }         from './parser.js';
 import { showDashboard, showUploadScreen }                           from './ui/screens.js';
 import { initUploadScreen, checkSavedData, showUploadError }         from './ui/upload.js';
 import { buildDeckSelect, buildQueueFilter,
-         buildDateFilter, updateFilterCount,
+         buildDateFilter,
          buildSectionQueueFilter,
          buildTurnOrderFilter }                                      from './ui/filter.js';
 import { updateHeader, updateMMRBadge,
-         renderTable, renderStreak }                                 from './ui/dashboard.js';
+         renderTable, renderStreak,
+         initTablePagination }                                       from './ui/dashboard.js';
 
 // Graphiques de base
 import { renderMMRChart }                                            from './charts/mmr.js';
-import { renderWinLossDonut, renderDailyChart, renderDeckBars }      from './charts/distribution.js';
+import { renderWinLossDonut, renderDailyChart }                      from './charts/distribution.js';
 import { renderTurnOrder, renderDurationChart }                      from './charts/gameplay.js';
 
 // Analyses avancées
 import { renderMomentum }                                            from './advanced/momentum.js';
 import { renderMatchupPredictor }                                    from './advanced/predictor.js';
-import { renderWeekComparison, renderBestWorstDeck }                 from './advanced/weekly.js';
-import { renderInkWinrates, renderMatchupMatrix }                    from './advanced/inkstats.js';
+import { renderWeekComparison }                                      from './advanced/weekly.js';
+import { renderMatchupMatrix }                                       from './advanced/inkstats.js';
 
 // ── État local des filtres par section ──────────────────────────────────────
 // Ces sections sont indépendantes du filtre queue global.
@@ -58,10 +59,8 @@ function renderMomentumSection() {
 // Appelé une seule fois au chargement du CSV.
 
 function renderGlobal(allGames) {
-  renderInkWinrates(allGames, 'inkWinrates');
   renderMatchupMatrix(allGames, 'matchupMatrix');
   renderWeekComparison(allGames);
-  renderBestWorstDeck(allGames);
 }
 
 // ── P1 : rendu filtré (déclenché à chaque changement de filtre) ─────────────
@@ -75,8 +74,6 @@ function renderFiltered(games) {
   // Graphiques principaux
   renderWinLossDonut(games);
   renderDailyChart(games);
-  renderDeckBars(games, 'myColors',  'myDeckBars');
-  renderDeckBars(games, 'oppColors', 'oppDeckBars', 2);
   renderTurnOrder(games);
   renderDurationChart(games);
 
@@ -92,7 +89,6 @@ function renderFiltered(games) {
 
 function onRerender() {
   const games = store.getFiltered();
-  updateFilterCount(games.length);
   renderFiltered(games);
   // MMR et Momentum s'actualisent sur leur propre base (sans queue globale)
   renderMMRSection();
@@ -117,24 +113,24 @@ function onCSV(csvText) {
     // Filtres queue locaux aux sections MMR et Momentum
     const queues = [...new Set(allGames.map(g => g.queue).filter(Boolean))].sort();
 
-    _mmrQueue = 'all';
+    // Premier filtre sélectionné par défaut (pas de "Toutes")
+    _mmrQueue = queues.length > 1 ? queues[0] : 'all';
     buildSectionQueueFilter('mmrQueuePills', 'mmrQueueSection', queues, q => {
       _mmrQueue = q;
       renderMMRSection();
     });
 
-    _momentumQueue = 'all';
+    _momentumQueue = queues.length > 1 ? queues[0] : 'all';
     buildSectionQueueFilter('momentumQueuePills', 'momentumQueueSection', queues, q => {
       _momentumQueue = q;
       renderMomentumSection();
     });
 
     const filtered = store.getFiltered();
-    updateFilterCount(filtered.length);
     renderGlobal(allGames);     // P1 : sections indépendantes du filtre
     renderFiltered(filtered);   // P1 : sections filtrables (avec filtre date appliqué)
-    renderMMRSection();         // rendu initial MMR (toutes files)
-    renderMomentumSection();    // rendu initial Momentum (toutes files)
+    renderMMRSection();         // rendu initial MMR
+    renderMomentumSection();    // rendu initial Momentum
 
     // B4 : affichage des avertissements de parsing (non bloquants)
     if (warnings.length) showUploadError(warnings.join(' · '));
@@ -154,5 +150,6 @@ function goToUpload() {
 
 document.addEventListener('DOMContentLoaded', () => {
   initUploadScreen(onCSV, goToUpload);
+  initTablePagination();
   checkSavedData();
 });

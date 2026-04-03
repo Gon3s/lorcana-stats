@@ -9,8 +9,9 @@ import { buildDecks }  from '../utils/deck-builder.js';
 // ── Compteur ────────────────────────────────────────────────────────────────
 
 export function updateFilterCount(n) {
-  document.getElementById('filterCount').innerHTML =
-    `<span>${n}</span> partie${n > 1 ? 's' : ''}`;
+  const el = document.getElementById('filterCount');
+  if (!el) return;
+  el.innerHTML = `<span>${n}</span> partie${n > 1 ? 's' : ''}`;
 }
 
 // ── Pills génériques (utilisées par le filtre queue) ─────────────────────────
@@ -219,8 +220,8 @@ export function buildSectionQueueFilter(pillsId, sectionId, queues, onPick) {
     onPick(value);
   };
 
-  pillsEl.appendChild(createPill('Toutes', 'all', true, pick));
-  queues.forEach(q => pillsEl.appendChild(createPill(q, q, false, pick)));
+  // Premier filtre sélectionné par défaut — pas de pill "Toutes"
+  queues.forEach((q, i) => pillsEl.appendChild(createPill(q, q, i === 0, pick)));
   addKeyboardNav(pillsEl);
 }
 
