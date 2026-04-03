@@ -191,31 +191,6 @@
         <div class="chart-wrap" style="height:260px"><canvas id="mmrChart"></canvas></div>
       </div>
 
-      <!-- ─── JOURNAL DES PARTIES ─── -->
-      <h2 class="section-label">Journal des Parties</h2>
-      <div class="card mb-6">
-        <div class="card-title">Toutes les parties</div>
-        <div class="card-subtitle">Résultats détaillés · du plus récent au plus ancien</div>
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Date</th><th>Résultat</th><th>Adversaire</th>
-                <th>Mon deck</th><th>Deck adverse</th>
-                <th>Lore moi</th><th>Lore eux</th>
-                <th>Tours</th><th>Durée</th><th>MMR Δ</th>
-              </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-          </table>
-        </div>
-        <div id="tablePagination" class="pagination-bar" hidden>
-          <button id="tablePrevBtn" class="pagination-btn">← Précédent</button>
-          <span id="tablePageInfo" class="pagination-info"></span>
-          <button id="tableNextBtn" class="pagination-btn">Suivant →</button>
-        </div>
-      </div>
-
       <!-- ─── MATCHUP PREDICTOR ─── -->
       <h2 class="section-label">Prédiction &amp; Matchups</h2>
       <div class="card mb-6">
@@ -298,6 +273,31 @@
         <div class="card-title">Cette semaine vs semaine précédente</div>
         <div class="card-subtitle">Comparaison des deux dernières semaines (toutes données)</div>
         <div id="weekCompContent"></div>
+      </div>
+
+      <!-- ─── JOURNAL DES PARTIES ─── -->
+      <h2 class="section-label">Journal des Parties</h2>
+      <div class="card mb-6">
+        <div class="card-title">Toutes les parties</div>
+        <div class="card-subtitle">Résultats détaillés · du plus récent au plus ancien</div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th><th>Résultat</th><th>Adversaire</th>
+                <th>Mon deck</th><th>Deck adverse</th>
+                <th>Lore moi</th><th>Lore eux</th>
+                <th>Tours</th><th>Durée</th><th>MMR Δ</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+        <div id="tablePagination" class="pagination-bar" hidden>
+          <button id="tablePrevBtn" class="pagination-btn">← Précédent</button>
+          <span id="tablePageInfo" class="pagination-info"></span>
+          <button id="tableNextBtn" class="pagination-btn">Suivant →</button>
+        </div>
       </div>
 
       <footer class="text-center mt-14 pt-6 border-t border-lborder text-muted text-sm italic">
