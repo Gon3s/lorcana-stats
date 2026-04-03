@@ -113,9 +113,12 @@
 
       <!-- FILTRE -->
       <div class="filter-bar">
-        <span class="filter-label">Deck</span>
-        <select id="deckSelect" class="filter-select" aria-label="Filtre par deck"></select>
-        <span id="deckSelectIcons" class="flex items-center gap-1 flex-shrink-0"></span>
+        <!-- Groupe Deck -->
+        <span class="filter-bar-group">
+          <span class="filter-label">Deck</span>
+          <select id="deckSelect" class="filter-select" aria-label="Filtre par deck"></select>
+          <span id="deckSelectIcons" class="flex items-center gap-1 flex-shrink-0"></span>
+        </span>
 
         <!-- Sous-filtre version (affiché si le deck a plusieurs versions) -->
         <span id="versionSelectSection" class="filter-bar-group" hidden>
@@ -130,19 +133,22 @@
         </span>
 
         <!-- Filtre ordre de jeu OTP / OTD -->
-        <span class="filter-label filter-sep">Ordre</span>
-        <div class="filter-pills" id="filterTurnOrder"></div>
+        <span class="filter-bar-group">
+          <span class="filter-label filter-sep">Ordre</span>
+          <div class="filter-pills" id="filterTurnOrder"></div>
+        </span>
 
-        <span class="filter-label filter-sep">Période</span>
-        <!-- U3 : labels accessibles sur les inputs de date -->
-        <label for="dateStart" class="sr-only">Date de début</label>
-        <input type="date" id="dateStart" class="filter-date" title="Date de début">
-        <span class="filter-date-sep">→</span>
-        <label for="dateEnd" class="sr-only">Date de fin</label>
-        <input type="date" id="dateEnd" class="filter-date" title="Date de fin">
-        <button id="dateResetBtn" class="filter-pill filter-reset" hidden title="Réinitialiser la période">✕</button>
-
-        <span class="filter-count" id="filterCount"></span>
+        <!-- Filtre période -->
+        <span class="filter-bar-group">
+          <span class="filter-label filter-sep">Période</span>
+          <!-- U3 : labels accessibles sur les inputs de date -->
+          <label for="dateStart" class="sr-only">Date de début</label>
+          <input type="date" id="dateStart" class="filter-date" title="Date de début">
+          <span class="filter-date-sep">→</span>
+          <label for="dateEnd" class="sr-only">Date de fin</label>
+          <input type="date" id="dateEnd" class="filter-date" title="Date de fin">
+          <button id="dateResetBtn" class="filter-pill filter-reset" hidden title="Réinitialiser la période">✕</button>
+        </span>
       </div>
 
       <!-- KPIs -->
@@ -185,7 +191,43 @@
         <div class="chart-wrap" style="height:260px"><canvas id="mmrChart"></canvas></div>
       </div>
 
+      <!-- ─── JOURNAL DES PARTIES ─── -->
+      <h2 class="section-label">Journal des Parties</h2>
+      <div class="card mb-6">
+        <div class="card-title">Toutes les parties</div>
+        <div class="card-subtitle">Résultats détaillés · du plus récent au plus ancien</div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th><th>Résultat</th><th>Adversaire</th>
+                <th>Mon deck</th><th>Deck adverse</th>
+                <th>Lore moi</th><th>Lore eux</th>
+                <th>Tours</th><th>Durée</th><th>MMR Δ</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+        <div id="tablePagination" class="pagination-bar" hidden>
+          <button id="tablePrevBtn" class="pagination-btn">← Précédent</button>
+          <span id="tablePageInfo" class="pagination-info"></span>
+          <button id="tableNextBtn" class="pagination-btn">Suivant →</button>
+        </div>
+      </div>
+
+      <!-- ─── MATCHUP PREDICTOR ─── -->
+      <h2 class="section-label">Prédiction &amp; Matchups</h2>
+      <div class="card mb-6">
+        <div class="card-title">Prédicteur de matchup</div>
+        <div class="card-subtitle">
+          Winrate historique contre chaque deck adverse · filtré par le deck sélectionné
+        </div>
+        <div id="predictorContent"></div>
+      </div>
+
       <!-- ─── WIN/LOSS + DAILY ─── -->
+      <h2 class="section-label">Distribution</h2>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div class="card">
           <div class="card-title">Victoires &amp; Défaites</div>
@@ -203,33 +245,6 @@
           <div class="card-title">Parties par jour</div>
           <div class="card-subtitle">Volume de jeu journalier</div>
           <div class="chart-wrap" style="height:180px"><canvas id="dailyChart"></canvas></div>
-        </div>
-      </div>
-
-      <!-- ─── STATISTIQUES PAR ENCRE ─── -->
-      <h2 class="section-label">Statistiques par Encre</h2>
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div class="card">
-          <div class="card-title">Winrate — mon deck</div>
-          <div class="card-subtitle">Par combinaison de couleurs jouées</div>
-          <div id="myDeckBars"></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Winrate — deck adverse</div>
-          <div class="card-subtitle">Contre quelles couleurs (≥ 2 parties)</div>
-          <div id="oppDeckBars"></div>
-        </div>
-      </div>
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div class="card">
-          <div class="card-title">Winrate par combinaison jouée</div>
-          <div class="card-subtitle">Performance de chaque bicolorité dans tes parties</div>
-          <div id="inkWinrates"></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Matrice de matchups</div>
-          <div class="card-subtitle">Ma combinaison (ligne) vs combinaison adverse (colonne)</div>
-          <div id="matchupMatrix"></div>
         </div>
       </div>
 
@@ -269,49 +284,20 @@
         <div class="chart-wrap" style="height:200px"><canvas id="momentumChart"></canvas></div>
       </div>
 
-      <!-- ─── MATCHUP PREDICTOR ─── -->
-      <h2 class="section-label">Prédiction &amp; Matchups</h2>
+      <!-- ─── MATRICE DE MATCHUPS ─── -->
+      <h2 class="section-label">Matrice de Matchups</h2>
       <div class="card mb-6">
-        <div class="card-title">Prédicteur de matchup</div>
-        <div class="card-subtitle">
-          Winrate historique contre chaque deck adverse · filtré par le deck sélectionné
-        </div>
-        <div id="predictorContent"></div>
+        <div class="card-title">Ma combinaison vs combinaison adverse</div>
+        <div class="card-subtitle">Winrate de ma combinaison (ligne) contre la combinaison adverse (colonne)</div>
+        <div id="matchupMatrix"></div>
       </div>
 
       <!-- ─── SUIVI DE PROGRESSION ─── -->
       <h2 class="section-label">Suivi de Progression</h2>
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div class="card">
-          <div class="card-title">Cette semaine vs semaine précédente</div>
-          <div class="card-subtitle">Comparaison des deux dernières semaines (toutes données)</div>
-          <div id="weekCompContent"></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Meilleur / pire deck — 20 dernières parties</div>
-          <div class="card-subtitle">Performance récente par combinaison (toutes données)</div>
-          <div id="bestWorstContent"></div>
-        </div>
-      </div>
-
-      <!-- ─── JOURNAL DES PARTIES ─── -->
-      <h2 class="section-label">Journal des Parties</h2>
       <div class="card mb-6">
-        <div class="card-title">20 dernières parties</div>
-        <div class="card-subtitle">Résultats détaillés · du plus récent au plus ancien</div>
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Date</th><th>Résultat</th><th>Adversaire</th>
-                <th>Mon deck</th><th>Deck adverse</th>
-                <th>Lore moi</th><th>Lore eux</th>
-                <th>Tours</th><th>Durée</th><th>MMR Δ</th>
-              </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-          </table>
-        </div>
+        <div class="card-title">Cette semaine vs semaine précédente</div>
+        <div class="card-subtitle">Comparaison des deux dernières semaines (toutes données)</div>
+        <div id="weekCompContent"></div>
       </div>
 
       <footer class="text-center mt-14 pt-6 border-t border-lborder text-muted text-sm italic">
