@@ -94,12 +94,45 @@ function onRerender() {
   renderMomentumSection();
 }
 
+// ── Rapport de parsing (lignes ignorées + avertissements) ──────────────────
+
+function showParseReport(ignored, warnings) {
+  const el = document.getElementById('parseReport');
+  if (!el) return;
+
+  const total = ignored.invalidResult + ignored.missingColors + ignored.duplicates;
+
+  if (!total && !warnings.length) {
+    el.style.display = 'none';
+    return;
+  }
+
+  const parts = [];
+  if (ignored.invalidResult > 0)
+    parts.push(`${ignored.invalidResult} résultat${ignored.invalidResult > 1 ? 's' : ''} invalide${ignored.invalidResult > 1 ? 's' : ''}`);
+  if (ignored.missingColors > 0)
+    parts.push(`${ignored.missingColors} couleur${ignored.missingColors > 1 ? 's' : ''} manquante${ignored.missingColors > 1 ? 's' : ''}`);
+  if (ignored.duplicates > 0)
+    parts.push(`${ignored.duplicates} doublon${ignored.duplicates > 1 ? 's' : ''}`);
+
+  const segments = [];
+  if (total > 0)
+    segments.push(`${total} ligne${total > 1 ? 's' : ''} ignorée${total > 1 ? 's' : ''} à l'import (${parts.join(', ')})`);
+  if (warnings.length)
+    segments.push(...warnings);
+
+  document.getElementById('parseReportText').textContent = segments.join(' · ');
+  el.style.display = 'flex';
+
+  document.getElementById('parseReportClose').onclick = () => { el.style.display = 'none'; };
+}
+
 // ── Callbacks ──────────────────────────────────────────────────────────────
 
 function onCSV(csvText) {
   try {
-    // B4 : parseCSV retourne { games, warnings }
-    const { games, warnings } = parseCSV(csvText);
+    // B4 : parseCSV retourne { games, warnings, ignored }
+    const { games, warnings, ignored } = parseCSV(csvText);
     store.setGames(games);
     showDashboard();
 
@@ -130,8 +163,8 @@ function onCSV(csvText) {
     renderMMRSection();         // rendu initial MMR
     renderMomentumSection();    // rendu initial Momentum
 
-    // B4 : affichage des avertissements de parsing (non bloquants)
-    if (warnings.length) showUploadError(warnings.join(' · '));
+    // Rapport de parsing : lignes ignorées + avertissements (dans le dashboard)
+    showParseReport(ignored, warnings);
   } catch (err) {
     showUploadScreen();
     showUploadError(err.message);

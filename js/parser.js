@@ -66,6 +66,9 @@ export function parseCSV(csvText) {
   // B1 : déduplication — clé composite startedAt + opponent + result
   const seen = new Set();
 
+  // Compteurs de lignes ignorées par raison
+  const ignored = { invalidResult: 0, missingColors: 0, duplicates: 0 };
+
   const games = parsed.data.map(row => {
     const startedAt = (row['Started At'] || '').trim();
     const dt        = startedAt ? new Date(startedAt) : null;
@@ -76,34 +79,33 @@ export function parseCSV(csvText) {
     if (rawDecklist && !decklist.length) decklisFailCount++;
 
     return {
-      date:        (row['Date']           || '').trim(),
+      date:      (row['Date']           || '').trim(),
       startedAt,
       dt,
-      // B3 : heure et jour en temps local (plus getUTCHours/getUTCDay)
-      dayOfWeek:   dt ? ((dt.getDay() + 6) % 7) : null, // 0=Lun … 6=Dim
-      hour:        dt ? dt.getHours()             : null,
-      result:      (row['Result']         || '').trim(),
-      opponent:    (row['Opponent']       || '').trim(),
+      result:    (row['Result']         || '').trim(),
+      opponent:  (row['Opponent']       || '').trim(),
       // Q2 : validation des valeurs numériques
-      myLore:      clamp(parseInt(row['My Lore'])       || 0, 0, 20),
-      oppLore:     clamp(parseInt(row['Opponent Lore']) || 0, 0, 20),
-      turns:       Math.max(0, parseInt(row['Turns'])   || 0),
-      duration:    Math.max(0, parseDuration(row['Duration'] || '')),
-      turnOrder:   (row['Turn Order']     || '').trim(),
-      myColors:    (row['My Colors']      || '').trim(),
-      oppColors:   (row['Opponent Colors']|| '').trim(),
-      mmrBefore:   parseMMR(row['MMR Before']),
-      mmrAfter:    parseMMR(row['MMR After']),
-      matchFormat: (row['Match Format']   || '').trim(),
+      myLore:    clamp(parseInt(row['My Lore'])       || 0, 0, 20),
+      oppLore:   clamp(parseInt(row['Opponent Lore']) || 0, 0, 20),
+      turns:     Math.max(0, parseInt(row['Turns'])   || 0),
+      duration:  Math.max(0, parseDuration(row['Duration'] || '')),
+      turnOrder: (row['Turn Order']     || '').trim(),
+      myColors:  (row['My Colors']      || '').trim(),
+      oppColors: (row['Opponent Colors']|| '').trim(),
+      mmrBefore: parseMMR(row['MMR Before']),
+      mmrAfter:  parseMMR(row['MMR After']),
       // F5 : extraction de la file de jeu
-      queue:       (row['Queue']          || '').trim(),
+      queue:     (row['Queue']          || '').trim(),
       decklist,
     };
   }).filter(g => {
-    if ((g.result !== 'Win' && g.result !== 'Loss') || !g.myColors) return false;
+    // Résultat invalide
+    if (g.result !== 'Win' && g.result !== 'Loss') { ignored.invalidResult++; return false; }
+    // Couleurs manquantes
+    if (!g.myColors) { ignored.missingColors++; return false; }
     // B1 : élimination des doublons
     const key = `${g.startedAt}|${g.opponent}|${g.result}`;
-    if (seen.has(key)) return false;
+    if (seen.has(key)) { ignored.duplicates++; return false; }
     seen.add(key);
     return true;
   });
@@ -119,5 +121,5 @@ export function parseCSV(csvText) {
     );
   }
 
-  return { games, warnings };
+  return { games, warnings, ignored };
 }

@@ -1,9 +1,7 @@
 /**
- * advanced/weekly.js — Comparaison hebdomadaire & meilleur/pire deck (SRP)
- * getISOWeek, weekStats et renderBestWorstDeck sont des fonctions pures.
+ * advanced/weekly.js — Comparaison hebdomadaire (SRP)
+ * getISOWeek et weekStats sont des fonctions pures.
  */
-
-import { esc } from '../utils/html.js';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -83,47 +81,3 @@ export function renderWeekComparison(allGames) {
     </div>`;
 }
 
-// ── Meilleur / Pire deck (20 dernières parties) ────────────────────────────
-
-export function renderBestWorstDeck(allGames) {
-  const last20 = allGames.slice(-20);
-  const byDeck = {};
-  for (const g of last20) {
-    (byDeck[g.myColors] = byDeck[g.myColors] || []).push(g);
-  }
-
-  const stats = Object.entries(byDeck)
-    .map(([deck, gs]) => {
-      const wins   = gs.filter(g => g.result === 'Win').length;
-      const losses = gs.filter(g => g.result === 'Loss').length;
-      return { deck, total: gs.length, wins, losses, rate: wins / gs.length * 100 };
-    })
-    .filter(s => s.total >= 2)
-    .sort((a, b) => b.rate - a.rate);
-
-  const container = document.getElementById('bestWorstContent');
-  if (!stats.length) {
-    container.innerHTML = '<p class="empty-msg">Pas assez de données.</p>';
-    return;
-  }
-
-  container.innerHTML = stats.map((s, i) => {
-    const isFirst = i === 0;
-    const isLast  = i === stats.length - 1 && stats.length > 1;
-    const medal   = isFirst ? '🥇' : isLast ? '💀' : `#${i + 1}`;
-    const color   = s.rate >= 60 ? 'var(--win)' : s.rate >= 40 ? 'var(--gold-light)' : 'var(--loss)';
-    const bg      = isFirst ? 'rgba(78,204,163,.08)' : isLast ? 'rgba(232,93,122,.08)' : 'transparent';
-    const border  = isFirst ? 'rgba(78,204,163,.3)'  : isLast ? 'rgba(232,93,122,.3)'  : 'var(--border)';
-
-    return `
-      <div class="bw-row" style="background:${bg};border-color:${border}">
-        <span class="bw-medal">${medal}</span>
-        <span class="bw-deck">${esc(s.deck)}</span>
-        <div class="bw-bar-wrap">
-          <div class="bw-bar" style="width:${s.rate.toFixed(0)}%;background:${color}"></div>
-        </div>
-        <span class="bw-rate"   style="color:${color}">${s.rate.toFixed(0)}%</span>
-        <span class="bw-record">${s.wins}V/${s.losses}D</span>
-      </div>`;
-  }).join('');
-}
