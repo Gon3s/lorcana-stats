@@ -96,12 +96,6 @@ function drawBackground(ctx) {
 
 /** Section header : titre + deck + divider. */
 function drawHeader(ctx, activeDeck) {
-  // Titre principal
-  ctx.textAlign = 'center';
-  ctx.fillStyle = C.gold;
-  ctx.font = '700 72px Cinzel, serif';
-  ctx.fillText('INKWELL STATS', W / 2, 130);
-
   // Sous-titre deck
   const deckLabel = (!activeDeck || activeDeck === 'all') ? 'Tous les decks' : activeDeck;
   ctx.fillStyle = C.muted;
@@ -393,15 +387,10 @@ function drawTop5(ctx, matchups, y) {
 function drawFooter(ctx, y) {
   drawDivider(ctx, y);
 
-  const date = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
   ctx.textAlign = 'center';
-  ctx.fillStyle = C.muted;
-  ctx.font = '300 26px "Crimson Pro", serif';
-  ctx.fillText(date, W / 2, y + 60);
-
   ctx.fillStyle = C.gold;
   ctx.font = '500 24px Cinzel, serif';
-  ctx.fillText('Inkwell Stats · duels.ink', W / 2, y + 100);
+  ctx.fillText('Inkwell Stats · duels.ink', W / 2, y + 60);
 
   // Petits gems décoratifs
   const gems = ['amber', 'amethyst', 'emerald', 'ruby', 'sapphire', 'steel'];
