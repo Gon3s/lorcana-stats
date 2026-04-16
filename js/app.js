@@ -55,15 +55,7 @@ function renderMomentumSection() {
   renderMomentum(games);
 }
 
-// ── P1 : rendu global (données indépendantes du filtre) ─────────────────────
-// Appelé une seule fois au chargement du CSV.
-
-function renderGlobal(allGames) {
-  renderMatchupMatrix(allGames, 'matchupMatrix');
-  renderWeekComparison(allGames);
-}
-
-// ── P1 : rendu filtré (déclenché à chaque changement de filtre) ─────────────
+// ── Rendu filtré (déclenché à chaque changement de filtre et au chargement) ──
 
 function renderFiltered(games) {
   if (!games.length) return;
@@ -83,6 +75,10 @@ function renderFiltered(games) {
 
   // Analyses dépendantes du filtre
   renderMatchupPredictor(games, store.activeDeck);
+
+  // Sections globales : répondent au filtre pour rester cohérentes
+  renderMatchupMatrix(games, 'matchupMatrix');
+  renderWeekComparison(games);
 }
 
 // ── Callback de re-rendu (déclenché par tout changement de filtre) ──────────
@@ -127,8 +123,7 @@ function onCSV(csvText) {
     });
 
     const filtered = store.getFiltered();
-    renderGlobal(allGames);     // P1 : sections indépendantes du filtre
-    renderFiltered(filtered);   // P1 : sections filtrables (avec filtre date appliqué)
+    renderFiltered(filtered);   // rendu initial : toutes les sections
     renderMMRSection();         // rendu initial MMR
     renderMomentumSection();    // rendu initial Momentum
 

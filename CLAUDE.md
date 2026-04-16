@@ -165,16 +165,15 @@ Never create a `new Chart()` without calling `destroyChart` first on the same ke
 
 ### 5. Render pipeline in `app.js`
 
-`app.js` distinguishes two render passes:
+`app.js` a un unique pipeline de rendu filtré :
 
 | Fonction | Déclencheur | Contenu |
 |---|---|---|
-| `renderGlobal(allGames)` | Une fois au chargement du CSV | Données indépendantes du filtre : matrice de matchups, comparaison hebdomadaire |
-| `renderFiltered(games)` | À chaque changement de filtre | Tout ce qui dépend de la sélection active |
+| `renderFiltered(games)` | Chargement initial du CSV **et** chaque changement de filtre | Toutes les sections : KPIs, graphiques, prédicteur, matrice de matchups, comparaison hebdomadaire |
 | `renderMMRSection()` | Filtre global **ou** filtre queue MMR local | Graphique MMR + badge Pic MMR |
 | `renderMomentumSection()` | Filtre global **ou** filtre queue Momentum local | Graphique momentum |
 
-Ne jamais appeler `renderGlobal` depuis `onRerender` — c'est intentionnel.
+Toutes les sections reçoivent les parties filtrées — y compris la matrice de matchups et la comparaison hebdomadaire. Quand aucun filtre deck n'est actif (`activeDeck === 'all'`), `renderFiltered` reçoit toutes les parties et le comportement est identique à un rendu global.
 
 ---
 
@@ -259,7 +258,7 @@ Chaque carte affiche :
 
 1. Create `js/charts/myfeature.js` (or `js/advanced/myfeature.js`)
 2. Export a single `renderMyFeature(games)` function
-3. Import and call it from `app.js` inside `renderGlobal` or `renderFiltered` depending on whether it depends on the active filter
+3. Import and call it from `app.js` inside `renderFiltered`
 4. Add any required `<canvas>` or container element to `index.html` in the correct section order (see Dashboard Layout above)
 5. Use Tailwind utility classes for layout; use `style.css` CSS variables for colors
 
@@ -364,4 +363,4 @@ Deploys the full repository as a static site to GitHub Pages.
 - Do not use `console.log` in any committed code
 - Do not mix French and English in code comments — use French
 - Do not re-add the removed sections (ink winrates, deck bars, best/worst deck) without explicit request
-- Do not call `renderGlobal` from `onRerender` — it is intentionally called only once at CSV load
+- Do not re-introduce a separate `renderGlobal` pass — all sections go through `renderFiltered` so the deck filter applies everywhere
