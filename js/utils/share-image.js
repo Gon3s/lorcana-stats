@@ -311,7 +311,7 @@ function drawTop5(ctx, matchups, y) {
   ctx.fillText('TOP 5 ADVERSAIRES', W / 2, y + 44);
 
   const top5 = matchups.slice(0, 5);
-  const rowH  = 118;
+  const rowH  = 132;
   const barW  = 660;
   const barH  = 18;
   const leftX = 90;
@@ -350,7 +350,7 @@ function drawTop5(ctx, matchups, y) {
       roundRect(ctx, leftX + wW, barY, lW, barH, barH / 2, C.loss);
     }
 
-    // Pourcentage à droite de la barre
+    // Pourcentage global à droite de la barre
     const vc = verdictColor(m.rate);
     ctx.textAlign = 'right';
     ctx.fillStyle = vc;
@@ -362,6 +362,30 @@ function drawTop5(ctx, matchups, y) {
     ctx.fillStyle = C.muted;
     ctx.font = '300 22px "Crimson Pro", serif';
     ctx.fillText(`${m.wins}V · ${m.losses}D · ${m.total}p`, leftX, barY + barH + 20);
+
+    // Ligne OTP / OTD
+    const orderParts = [];
+    if (m.otpRate !== null) {
+      orderParts.push({ label: `OTP ${m.otpRate.toFixed(0)}%`, color: m.otpRate >= 50 ? C.win : C.loss });
+    }
+    if (m.otdRate !== null) {
+      orderParts.push({ label: `OTD ${m.otdRate.toFixed(0)}%`, color: m.otdRate >= 50 ? C.win : C.loss });
+    }
+    if (orderParts.length) {
+      let ox = leftX;
+      orderParts.forEach((part, pi) => {
+        if (pi > 0) {
+          ctx.fillStyle = C.border;
+          ctx.font = '300 20px "Crimson Pro", serif';
+          ctx.fillText(' · ', ox - 4, barY + barH + 42);
+          ox += ctx.measureText(' · ').width;
+        }
+        ctx.fillStyle = part.color;
+        ctx.font = '400 20px "Crimson Pro", serif';
+        ctx.fillText(part.label, ox, barY + barH + 42);
+        ox += ctx.measureText(part.label).width;
+      });
+    }
   });
 }
 
@@ -426,7 +450,7 @@ export async function generateShareImage(games, activeDeck) {
   drawBestMatchup(ctx, best, 750);
   drawDivider(ctx, 980);
   drawTop5(ctx, matchups, 998);
-  drawFooter(ctx, 1670);
+  drawFooter(ctx, 1740);
 
   return canvas.toDataURL('image/png');
 }
