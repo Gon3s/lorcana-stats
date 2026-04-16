@@ -112,9 +112,9 @@ export function buildDeckSelect(allGames, setDeck, setVersionKeys, onRerender) {
       allVersionOpt.textContent = 'Toutes les versions';
       versionSelectEl.appendChild(allVersionOpt);
 
-      versions.forEach(v => {
+      versions.forEach((v, idx) => {
         const opt = document.createElement('option');
-        opt.value       = String(v.version - 1);  // index 0-based
+        opt.value       = String(idx);  // index dans le tableau versions (trié par total)
         opt.textContent = `v${v.version} — ${v.total} partie${v.total > 1 ? 's' : ''} (${v.firstPlayed} → ${v.lastPlayed})`;
         versionSelectEl.appendChild(opt);
       });
