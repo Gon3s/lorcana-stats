@@ -13,7 +13,7 @@ function verdict(rate) {
   return                 { label: 'Défavorable',  color: 'var(--loss)'      };
 }
 
-function buildMatchups(games) {
+export function buildMatchups(games) {
   const groups = {};
   for (const g of games) {
     (groups[g.oppColors] = groups[g.oppColors] || []).push(g);

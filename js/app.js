@@ -29,6 +29,9 @@ import { renderMatchupPredictor }                                    from './adv
 import { renderWeekComparison }                                      from './advanced/weekly.js';
 import { renderMatchupMatrix }                                       from './advanced/inkstats.js';
 
+// Partage
+import { downloadShareImage }                                         from './utils/share-image.js';
+
 // ── État local des filtres par section ──────────────────────────────────────
 // Ces sections sont indépendantes du filtre queue global.
 
@@ -147,4 +150,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initUploadScreen(onCSV, goToUpload);
   initTablePagination();
   checkSavedData();
+
+  document.getElementById('shareBtn').addEventListener('click', () => {
+    downloadShareImage(store.getFiltered(), store.activeDeck);
+  });
 });
