@@ -1,11 +1,9 @@
 /**
  * distribution.js — Graphiques de distribution (SRP)
- * Win/Loss donut, parties par jour, barres winrate deck.
+ * Win/Loss donut, parties par jour.
  */
 
-import { destroyChart, registerChart, groupBy, winStats, avg, GRID } from './registry.js';
-import { inkBadge } from '../utils/ink.js';
-import { esc }      from '../utils/html.js';
+import { destroyChart, registerChart, groupBy, avg, GRID } from './registry.js';
 
 // ── Win/Loss Donut ─────────────────────────────────────────────────────────
 
@@ -107,25 +105,3 @@ export function renderDailyChart(games) {
   }));
 }
 
-// ── Barres winrate par deck (HTML) ─────────────────────────────────────────
-
-export function renderDeckBars(games, colorKey, containerId, minGames = 1) {
-  const stats = Object.entries(groupBy(games, colorKey))
-    .map(([k, gs]) => ({ deck: k, ...winStats(gs) }))
-    .filter(s => s.total >= minGames)
-    .sort((a, b) => b.total - a.total);
-
-  document.getElementById(containerId).innerHTML = stats.map(s => {
-    const color = s.rate >= 50 ? '#4ecca3' : '#e85d7a';
-    return `
-      <div class="bar-row">
-        <div class="bar-label" title="${esc(s.deck)}">${inkBadge(s.deck, 18)}</div>
-        <div class="bar-track">
-          <div class="bar-fill" style="width:${s.rate.toFixed(1)}%;background:${color}"></div>
-        </div>
-        <div class="bar-stat">
-          ${s.rate.toFixed(0)}%<span class="bar-count">(${s.total})</span>
-        </div>
-      </div>`;
-  }).join('');
-}
