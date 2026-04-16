@@ -121,6 +121,61 @@ function drawHeader(ctx, activeDeck) {
   ctx.stroke();
 }
 
+/** Section decks joués : combinaisons myColors avec dots + nb de parties. */
+function drawDecksJoues(ctx, games, y) {
+  // Grouper par myColors, trier par volume desc
+  const groups = {};
+  for (const g of games) {
+    if (g.myColors) groups[g.myColors] = (groups[g.myColors] || 0) + 1;
+  }
+  const combos = Object.entries(groups).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  if (!combos.length) return;
+
+  // Label section
+  ctx.textAlign = 'center';
+  ctx.fillStyle = C.muted;
+  ctx.font = '500 20px Cinzel, serif';
+  ctx.fillText('DECKS JOUÉS', W / 2, y + 28);
+
+  const dotR    = 11;
+  const dotGap  = 4;
+  const itemGap = 32;
+  ctx.font = '300 22px "Crimson Pro", serif';
+
+  // Calculer la largeur de chaque item pour centrage
+  const items = combos.map(([combo, count]) => {
+    const parts  = combo.split('/').map(s => s.trim().toLowerCase());
+    const dotsW  = parts.length * (dotR * 2 + dotGap) - dotGap;
+    const label  = combo + ` ×${count}`;
+    const textW  = ctx.measureText(label).width;
+    return { combo, count, parts, dotsW, label, textW, total: dotsW + 10 + textW };
+  });
+
+  const totalW = items.reduce((acc, it) => acc + it.total, 0) + itemGap * (items.length - 1);
+  let x = W / 2 - totalW / 2;
+  const lineY = y + 62;
+
+  items.forEach(item => {
+    // Dots d'encre
+    item.parts.forEach((key, i) => {
+      const hex = INK_COLOR[key] || C.muted;
+      ctx.beginPath();
+      ctx.arc(x + dotR + i * (dotR * 2 + dotGap), lineY, dotR, 0, Math.PI * 2);
+      ctx.fillStyle = hex;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    });
+    // Texte
+    ctx.textAlign = 'left';
+    ctx.fillStyle = C.text;
+    ctx.font = '300 22px "Crimson Pro", serif';
+    ctx.fillText(item.label, x + item.dotsW + 10, lineY + 8);
+    x += item.total + itemGap;
+  });
+}
+
 /** Section winrate : arc circulaire + stats V/D. */
 function drawWinrate(ctx, stats) {
   const cx = W / 2;
@@ -365,6 +420,7 @@ export async function generateShareImage(games, activeDeck) {
   // Dessin
   drawBackground(ctx);
   drawHeader(ctx, activeDeck);
+  drawDecksJoues(ctx, games, 228);
   drawWinrate(ctx, stats);
   drawDivider(ctx, 730);
   drawBestMatchup(ctx, best, 750);
