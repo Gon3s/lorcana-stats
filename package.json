@@ -10,6 +10,6 @@
   "devDependencies": {
     "chart.js":    "4.4.1",
     "papaparse":   "5.4.1",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^4.3.3"
   }
 }
