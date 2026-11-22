@@ -32,6 +32,9 @@ jobs:
       - name: 🏗️ Générer css/tailwind.css
         run: npm run build
 
+      - name: 🔒 Vérifier les artefacts générés
+        run: git diff --exit-code -- css/tailwind.css vendor/chart.umd.js vendor/papaparse.min.js
+
       - name: 📤 Uploader le CSS généré
         uses: actions/upload-artifact@v4
         with:
