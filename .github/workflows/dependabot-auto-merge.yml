@@ -1,0 +1,101 @@
+name: Dependabot patch auto-merge
+
+on:
+  workflow_run:
+    workflows: ["✅ CI — Validation"]
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: dependabot-auto-merge-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Merge the exact tested patch
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
+        with:
+          script: |
+            const event = context.payload.workflow_run;
+            const {owner, repo} = context.repo;
+            const repository = `${owner}/${repo}`;
+            const skip = reason => core.info(`Manual review: ${reason}`);
+
+            const {data: workflow} = await github.rest.actions.getWorkflow({
+              owner, repo, workflow_id: event.workflow_id,
+            });
+            if (workflow.path !== '.github/workflows/ci.yml') {
+              return skip('unexpected workflow');
+            }
+            const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRun, {
+              owner, repo, run_id: event.id, filter: 'latest', per_page: 100,
+            });
+            if (!jobs.some(job =>
+              job.name === '🎉 CI réussie' && job.conclusion === 'success')) {
+              return skip('final CI gate did not succeed');
+            }
+
+            const {data: candidates} = await github.rest.pulls.list({
+              owner, repo, state: 'open', base: 'main',
+              head: `${owner}:${event.head_branch}`, per_page: 100,
+            });
+            const matching = candidates.filter(pr => pr.head.sha === event.head_sha);
+            if (matching.length !== 1) return skip('no unique PR matching the tested commit');
+            const {data: pr} = await github.rest.pulls.get({
+              owner, repo, pull_number: matching[0].number,
+            });
+            if (pr.user.login !== 'dependabot[bot]' || pr.draft || pr.state !== 'open' ||
+                pr.base.ref !== 'main' || pr.base.repo.full_name !== repository ||
+                pr.head.repo?.full_name !== repository ||
+                !pr.head.ref.startsWith('dependabot/npm_and_yarn/') ||
+                pr.head.sha !== event.head_sha) {
+              return skip('PR author, source, state or tested commit is ineligible');
+            }
+            if (!pr.labels.some(label => label.name === 'dependencies:auto-merge')) {
+              return skip('PR was not classified as an eligible patch');
+            }
+            const runPr = event.pull_requests?.find(item => item.number === pr.number);
+            if (!runPr || runPr.head.sha !== event.head_sha || runPr.base.sha !== pr.base.sha) {
+              return skip('CI did not test the current base and head');
+            }
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner, repo, pull_number: pr.number, per_page: 100,
+            });
+            const allowed = new Set(['package.json', 'package-lock.json']);
+            if (!files.length || files.some(file =>
+              file.status !== 'modified' || !allowed.has(file.filename))) {
+              return skip('files outside npm manifests changed');
+            }
+
+            const {data: current} = await github.rest.pulls.get({
+              owner, repo, pull_number: pr.number,
+            });
+            if (current.state !== 'open' || current.draft ||
+                current.head.sha !== event.head_sha || current.base.sha !== pr.base.sha) {
+              return skip('PR changed while it was being evaluated');
+            }
+            try {
+              const {data: merged} = await github.rest.pulls.merge({
+                owner, repo, pull_number: pr.number,
+                sha: event.head_sha, merge_method: 'squash',
+              });
+              if (!merged.merged) return skip('GitHub did not accept the merge');
+            } catch (error) {
+              if ([405, 409, 422].includes(error.status)) {
+                return skip(`merge refused or PR changed (HTTP ${error.status})`);
+              }
+              throw error;
+            }
+            core.info(`Merged Dependabot patch #${pr.number}`);

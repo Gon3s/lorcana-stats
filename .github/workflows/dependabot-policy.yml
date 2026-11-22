@@ -1,0 +1,51 @@
+name: Dependabot policy
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  classify:
+    if: >-
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Read Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
+      - name: Apply patch auto-merge policy
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
+        env:
+          ELIGIBLE: ${{ steps.metadata.outputs.update-type == 'version-update:semver-patch' && steps.metadata.outputs.package-ecosystem == 'npm' }}
+        with:
+          script: |
+            const label = 'dependencies:auto-merge';
+            const eligible = process.env.ELIGIBLE === 'true';
+            const issue = {...context.repo, issue_number: context.issue.number};
+            if (eligible) {
+              try {
+                await github.rest.issues.getLabel({...context.repo, name: label});
+              } catch (error) {
+                if (error.status !== 404) throw error;
+                await github.rest.issues.createLabel({
+                  ...context.repo,
+                  name: label,
+                  color: '0e8a16',
+                  description: 'Patch Dependabot eligible for merge after CI',
+                });
+              }
+              await github.rest.issues.addLabels({...issue, labels: [label]});
+              return;
+            }
+            try {
+              await github.rest.issues.removeLabel({...issue, name: label});
+            } catch (error) {
+              if (error.status !== 404) throw error;
+            }
